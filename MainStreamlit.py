@@ -1,11 +1,10 @@
 import streamlit as st
 from datetime import datetime
 import os
-
-# List all environment variables
+from GraphDrawer import GraphDrawer
 
 import google.generativeai as genai
-API_KEY = 'AIzaSyDrd7Wy1AV0sh_O_x6_VJYoctyb0Zd0PfA'
+API_KEY = 'AIzaSyCTNncuxKui7XIzrZWt1o_EtLIxiew8qtE'
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash-8b",
@@ -21,6 +20,14 @@ st.set_page_config(page_title="Chatbot", layout="wide")
 
 # Chatbot logic
 def chatbot_response(user_input):
+    if "graph" in user_input:
+        graph_drawer = GraphDrawer("AAPL", datetime(2021, 1, 1), datetime(2021, 12, 31))
+        # Fetch stock data
+        graph_drawer.fetch_stock_data()
+        # Display the data table
+        graph_drawer.show_data_table()
+        # Plot the stock graph
+        graph_drawer.plot_stock_data()
     return model.generate_content(user_input)
 # Main app
 def main():
