@@ -29,6 +29,8 @@ def chatbot_response(user_input):
         # Plot the stock graph
         graph_drawer.plot_stock_data()
     return model.generate_content(user_input)
+
+
 # Main app
 def main():
     st.title("Chatbot Application")
