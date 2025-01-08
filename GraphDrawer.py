@@ -2,6 +2,7 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 from datetime import datetime
 import streamlit as st
+import io
 
 
 class GraphDrawer:
@@ -44,6 +45,15 @@ class GraphDrawer:
         plt.legend()
         plt.grid(True)
         st.pyplot(plt)
+
+        # Save plot to an in-memory buffer
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format="png")
+        buffer.seek(0)  # Reset buffer to the beginning
+        plt.close()  # Close the plot to free up memory
+    
+        return buffer
+
 
     def show_data_table(self):
         """
