@@ -128,10 +128,13 @@ def chatbot_response(user_input):
         return f"Error: {str(e)}"
 
 
+<<<<<<< HEAD
+=======
 
 
 
 
+>>>>>>> da1b2e309b57a003939e91d3ad8e53d10e98b39a
 # Main app
 def main():
     st.title("Chatbot Application")
