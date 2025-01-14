@@ -63,6 +63,15 @@ def extract_company_names(user_input):
         return [company.strip() for company in companies]
     raise ValueError("No recognizable comparison request in input.")
 
+def extract_capital_letters(input_string):
+    """
+    Extracts and returns only the capital letters from the given string.
+
+    :param input_string: The input string to process.
+    :return: A string containing only the capital letters from the input.
+    """
+    return ''.join(char for char in input_string if char.isupper())
+
 
 # Chatbot logic
 def chatbot_response(user_input):
@@ -103,7 +112,7 @@ def chatbot_response(user_input):
             end_date = datetime.today()
             graph_drawer = GraphDrawer(ticker, start_date, end_date)
             graph_drawer.fetch_stock_data()
-            graph_drawer.show_data_table()
+            # graph_drawer.show_data_table()
             plot_buffer = graph_drawer.plot_stock_data()
 
             if plot_buffer:
@@ -115,11 +124,26 @@ def chatbot_response(user_input):
                 st.session_state.chat_history.append(
                     {"role": "assistant", "content": f"Plot for {company_name}:", "image": image_html}
                 )
-                # Display the plot in the chat
-                with st.chat_message("assistant"):
-                    st.markdown(image_html, unsafe_allow_html=True)
 
             return f"Stock data and graph for {company_name} displayed successfully."
+        elif "30-day forecast" in user_input.lower():
+            # company_name = extract_company_name(user_input).upper()
+            company_name = extract_capital_letters(user_input)
+            ticker = resolve_ticker(company_name) + ".TA"
+            st.write(f"Resolved Ticker: {ticker}")
+
+            graph_drawer = GraphDrawer(ticker, None, None)  # No need for date range here
+            graph_drawer.plot_30_day_forecast("LSTM/forecast_stocks.csv")
+            return f"30-day predictions for {company_name} displayed successfully."
+        elif "comparing forecasts" in user_input.lower():
+            # company_name = extract_company_name(user_input).upper()
+            company_name = extract_capital_letters(user_input)
+            ticker = resolve_ticker(company_name) + ".TA"
+            st.write(f"Resolved Ticker: {ticker}")
+
+            graph_drawer = GraphDrawer(ticker, datetime(2024, 1, 1), datetime.today())
+            graph_drawer.plot_forecast_vs_actual("LSTM/forecast_stocks.csv")
+            return f"Comparison of actual vs predicted prices for {company_name} displayed successfully."
         else:
             response = model.generate_content(user_input).text
             return response
@@ -128,13 +152,6 @@ def chatbot_response(user_input):
         return f"Error: {str(e)}"
 
 
-<<<<<<< HEAD
-=======
-
-
-
-
->>>>>>> da1b2e309b57a003939e91d3ad8e53d10e98b39a
 # Main app
 def main():
     st.title("Chatbot Application")
@@ -169,6 +186,7 @@ def main():
             st.markdown(response)
         # Add assistant response to chat history
         st.session_state.chat_history.append({"role": "assistant", "content": response, })
+
 
 
 
