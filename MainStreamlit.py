@@ -17,7 +17,7 @@ LSTM_CSV_PATH = "/workspaces/FinalProj/LSTM/actual_vs_pred_stocks.csv"
 XGBOOST_CSV_PATH = "/workspaces/FinalProj/XGBoost/model_XGBoost_metrics_and_predictions.csv"
 LIGHTGBM_CSV_PATH = "/workspaces/FinalProj/LightGBM/metrics_and_predictions.csv"
 BEST_MODEL_CSV = "/workspaces/FinalProj/Metrics/best_model_per_stock.csv"
-
+SECTORS_DF_PATH = "sectors_df.csv"
 # Initialize API and Streamlit
 
 def initialize_genai():
@@ -88,7 +88,12 @@ def detect_intent(user_input):
             return {"intent": "compare", "companies": extract_company_names(user_input)}
         else:
             return {"intent": "graph", "company": extract_company_name(user_input)}
-
+    sector_keywords = ["actual values", "sector", "companies in sector", "all"]
+    if any(keyword in user_input for keyword in sector_keywords):
+        sector_name = user_input.split("sector")[1].strip() if "sector" in user_input else None
+        if sector_name:
+            return {"intent": "sector_values", "sector": sector_name}
+        raise ValueError("Please specify the sector name for the query.")
     # Expanded keywords for comparison requests
     compare_keywords = ["compare", "difference between", "versus", "vs", ",","&","and","And","AND"]
     if any(keyword in user_input for keyword in compare_keywords):
@@ -193,10 +198,62 @@ def display_graph(buffer):
     image_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
     image_html = f'<img src="data:image/png;base64,{image_base64}" alt="Stock Plot">'
     return image_html,image_base64
+# New Function to Fetch Actual Values by Sector
+def get_actual_values_by_sector(sector, sectors_df_path=SECTORS_DF_PATH, start_date=None, end_date=None):
+    try:
+        # Load sector data
+        sectors_df = pd.read_csv(sectors_df_path)
 
+        # Filter companies in the given sector
+        sector_companies = sectors_df[sectors_df["Market Sector"].str.lower() == sector.lower()]
+        if sector_companies.empty:
+            raise ValueError(f"No companies found in the sector '{sector}'.")
+
+        # Extract tickers
+        tickers = sector_companies["Symbol"].tolist()
+
+        # Container for data
+        all_actual_values = []
+
+        for ticker in tickers:
+            # Add ".TA" for Israeli market tickers
+            ticker += ".TA"
+
+            # Use LSTM as the default model for demonstration (this can be extended)
+            stocks_model = "LSTM"
+
+            # Fetch data
+            data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
+            if not data.empty:
+                all_actual_values.append((ticker, data["Date"], data["Actual"]))
+
+        # Combine all actual values
+        if not all_actual_values:
+            raise ValueError("No actual values found for the companies in the sector.")
+
+        result_df = pd.DataFrame(columns=["Ticker", "Date", "Actual"])
+        for ticker, dates, actuals in all_actual_values:
+            df = pd.DataFrame({"Ticker": ticker, "Date": dates, "Actual": actuals})
+            result_df = pd.concat([result_df, df], ignore_index=True)
+
+        return result_df
+
+    except Exception as e:
+        st.error(f"Error processing sector data: {e}")
+        return None
 # Chatbot Response Logic
 def chatbot_response(user_input, model, ticker_mapping):
     try:
+        intent_data = detect_intent(user_input)
+        if intent_data["intent"] == "sector_values":
+            sector_name = intent_data["sector"]
+            start_date, end_date = datetime(2024, 1, 1), datetime.today()
+            sector_data = get_actual_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
+
+            if sector_data is not None:
+                st.dataframe(sector_data)  # Display the data
+                return {"text": f"Here are the actual values for companies in the {sector_name} sector."}
+
         if "graph" in user_input.lower():
             company_name = extract_company_name(user_input).upper()
             ticker = resolve_ticker(company_name, ticker_mapping) + ".TA"
