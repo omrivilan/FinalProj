@@ -50,20 +50,52 @@ def resolve_ticker(user_input, ticker_mapping):
 
 # Extract Company Names
 def extract_company_name(user_input):
+    """
+    Extracts the company name for single graph requests.
+    Matches expanded keywords dynamically.
+    """
     user_input = user_input.lower()
-    if "graph of" in user_input:
-        return user_input.split("graph of")[1].strip()
-    elif "graph" in user_input:
-        return user_input.split("graph")[1].strip()
+    graph_keywords = ["graph of", "graph", "plot of", "plot", "visualize", "show", "chart of", "chart"]
+
+    for keyword in graph_keywords:
+        if keyword in user_input:
+            return user_input.split(keyword)[1].strip()
+
     raise ValueError("No recognizable company name in input.")
 
 def extract_company_names(user_input):
     user_input = user_input.lower()
-    if "compare" in user_input:
-        user_input = user_input.split("compare")[1]
-        companies = user_input.replace("of", "").split("and" if "and" in user_input else "&")
-        return [company.strip() for company in companies]
-    raise ValueError("No recognizable comparison request in input.")
+    delimiters = ["compare", "difference between", "versus", "vs", ",","&","and","And","AND"]
+    for delimiter in delimiters:
+        user_input = user_input.replace(delimiter, ",")
+
+    companies = user_input.split(",")
+    companies = [company.strip() for company in companies if company.strip()]
+    if len(companies) < 2:
+        raise ValueError("At least two companies are required for comparison.")
+    return companies
+def detect_intent(user_input):
+    """
+    Detects the user's intent based on keywords and sentence patterns.
+    Returns a dictionary with the detected intent and related information.
+    """
+    user_input = user_input.lower()
+
+    # Expanded keywords for graph requests
+    graph_keywords = ["graph", "plot", "visualize", "show", "chart"]
+    if any(keyword in user_input for keyword in graph_keywords):
+        if "compare" in user_input or ("and" in user_input or "," in user_input):
+            return {"intent": "compare", "companies": extract_company_names(user_input)}
+        else:
+            return {"intent": "graph", "company": extract_company_name(user_input)}
+
+    # Expanded keywords for comparison requests
+    compare_keywords = ["compare", "difference between", "versus", "vs", ",","&","and","And","AND"]
+    if any(keyword in user_input for keyword in compare_keywords):
+        return {"intent": "compare", "companies": extract_company_names(user_input)}
+
+    # Default to text-based intent
+    return {"intent": "text"}
 
 # Extract Data by Model
 def extract_data_by_model(company, stocks_model, start_date, end_date):
