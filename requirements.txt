@@ -3,3 +3,4 @@ datetime
 yfinance
 google.generativeai
 openpyxl
+matplotlib
