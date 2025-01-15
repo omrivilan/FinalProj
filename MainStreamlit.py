@@ -67,7 +67,7 @@ def extract_company_name(user_input):
 
 def extract_company_names(user_input):
     user_input = user_input.lower()
-    delimiters = ["compare", "difference between", "versus", "vs", ",","&","and","And","AND"]
+    delimiters = ["compare","comparison", "difference between", "versus", "vs", ",","&","and","And","AND"]
     for delimiter in delimiters:
         user_input = user_input.replace(delimiter, ",")
 
@@ -91,10 +91,10 @@ def detect_intent(user_input):
             return {"intent": "sector_values", "sector": sector_name}
         raise ValueError("Please specify the sector name for the query.")
     # Expanded keywords for comparison requests
-    compare_keywords = ["compare", "difference between", "versus", "vs", ",","&","and","And","AND"]
+    compare_keywords = ["compare","comparison", "difference between", "versus", "vs", ",","&","and","And","AND"]
     if any(keyword in user_input for keyword in compare_keywords):
         return {"intent": "compare", "companies": extract_company_names(user_input)}
-    graph_keywords = ["graph", "plot", "visualize", "show", "chart"]
+    graph_keywords = ["graph", "plot", "visualize", "show", "chart", "chart of", "plot of", "graph of"]
     if any(keyword in user_input for keyword in graph_keywords):
         if "compare" in user_input or ("and" in user_input or "," in user_input):
             return {"intent": "compare", "companies": extract_company_names(user_input)}
@@ -326,7 +326,17 @@ def generate_predicted_values_graph(data, sector_name):
     return buffer
 
 
+# Helper Functions
+def calculate_monthly_trends(data):
+    data['Month'] = pd.to_datetime(data['Date']).dt.to_period('M')
+    trends = data.groupby('Month')['Actual'].agg(['first', 'last']).reset_index()
+    trends['Trend'] = trends['last'] - trends['first']
+    return trends
 
+def identify_model_misses(data, threshold=0.1):
+    data['Absolute_Error'] = abs(data['Actual'] - data['Predicted'])
+    significant_misses = data[data['Absolute_Error'] > threshold * data['Actual']]
+    return significant_misses
 
 
 # Chatbot Response Logic
@@ -337,16 +347,28 @@ def chatbot_response(user_input, model, ticker_mapping):
             sector_name = intent_data["sector"]
             start_date, end_date = datetime(2024, 1, 1), datetime.today()
             sector_data_actual = get_actual_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
+            sector_data_actual["Date"] = pd.to_datetime(sector_data_actual["Date"], dayfirst=True)
 
             # Reverse the mapping to get company names from tickers
             ticker_to_company_name = {v: k for k, v in ticker_mapping.items()}
 
+            # Generate Actual Values Graph and Collect Summary
+            actual_values_summary = []
             if sector_data_actual is not None and not sector_data_actual.empty:
-                # Generate Actual Values Graph
                 fig_actual, ax_actual = plt.subplots(figsize=(12, 8))
                 for ticker, data in sector_data_actual.groupby("Ticker"):
                     company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
                     ax_actual.plot(pd.to_datetime(data["Date"]), data["Actual"], label=company_name)
+
+                    # Collect actual values summary
+                    actual_summary = {
+                        "Company Name": company_name,
+                        "Min": data["Actual"].min(),
+                        "Max": data["Actual"].max(),
+                        "Mean": data["Actual"].mean(),
+                        "Trend": "upward" if data["Actual"].iloc[-1] > data["Actual"].iloc[0] else "downward"
+                    }
+                    actual_values_summary.append(actual_summary)
 
                 ax_actual.set_title(f"Actual Values for {sector_name} Sector")
                 ax_actual.set_xlabel("Date")
@@ -366,14 +388,25 @@ def chatbot_response(user_input, model, ticker_mapping):
 
                 image_html_actual, image_base64_actual = display_graph(buffer_actual)
 
-            # Generate Predicted Values Graph
+            # Generate Predicted Values Graph and Collect Summary
             sector_data_predicted = get_predicted_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
-
+            sector_data_predicted["Date"] = pd.to_datetime(sector_data_predicted["Date"], dayfirst=True)
+            predicted_values_summary = []
             if sector_data_predicted is not None and not sector_data_predicted.empty:
                 fig_predicted, ax_predicted = plt.subplots(figsize=(12, 8))
                 for ticker, data in sector_data_predicted.groupby("Ticker"):
                     company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
                     ax_predicted.plot(pd.to_datetime(data["Date"]), data["Predicted"], label=company_name)
+
+                    # Collect predicted values summary
+                    predicted_summary = {
+                        "Company Name": company_name,
+                        "Min": data["Predicted"].min(),
+                        "Max": data["Predicted"].max(),
+                        "Mean": data["Predicted"].mean(),
+                        "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
+                    }
+                    predicted_values_summary.append(predicted_summary)
 
                 ax_predicted.set_title(f"Predicted Values for {sector_name} Sector")
                 ax_predicted.set_xlabel("Date")
@@ -393,19 +426,47 @@ def chatbot_response(user_input, model, ticker_mapping):
 
                 image_html_predicted, image_base64_predicted = display_graph(buffer_predicted)
 
-            # Return both graphs
+            # Format sector-wide summary for text generation
+            formatted_sector_input = (
+                f"Sector-wide analysis for {sector_name} sector:\n\n"
+                "Actual Values Summary:\n" +
+                "\n".join(
+                    f"- {summary['Company Name']}:\n"
+                    f"  Min: {summary['Min']:.2f}, Max: {summary['Max']:.2f}, "
+                    f"Mean: {summary['Mean']:.2f}, Trend: {summary['Trend']}"
+                    for summary in actual_values_summary
+                ) +
+                "\n\nPredicted Values Summary:\n" +
+                "\n".join(
+                    f"- {summary['Company Name']}:\n"
+                    f"  Min: {summary['Min']:.2f}, Max: {summary['Max']:.2f}, "
+                    f"Mean: {summary['Mean']:.2f}, Trend: {summary['Trend']}"
+                    for summary in predicted_values_summary
+                ) +
+                "\n\nPlease provide an analysis comparing the trends, values, and predictions for these companies, "
+                "highlight which companies seem to be performing better in the sector, and suggest any insights or recommendations."
+            )
+
+            # Generate textual analysis
+            generated_sector_text = model.generate_content(formatted_sector_input).text
+            
+
+            # Return both graphs and text
             return {
                 "actual_html": image_html_actual,
                 "actual_image": image_base64_actual,
                 "predicted_html": image_html_predicted,
                 "predicted_image": image_base64_predicted,
+                "text": generated_sector_text
             }
+
 
 
         if intent_data["intent"] == "graph":
             company_name = extract_company_name(user_input).upper()
             ticker = resolve_ticker(company_name, ticker_mapping) + ".TA"
-            stocks_model = pd.read_csv(BEST_MODEL_CSV)["Model"].values[0]
+            best_model_df = pd.read_csv(BEST_MODEL_CSV)
+            stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
 
             start_date, end_date = datetime(2024, 1, 1), datetime.today()
             data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
@@ -465,9 +526,12 @@ def chatbot_response(user_input, model, ticker_mapping):
             }
 
 
-        elif "compare" in user_input.lower():
+        elif intent_data["intent"] == "compare":
             company_names = extract_company_names(user_input)
             tickers = [resolve_ticker(name.upper(), ticker_mapping) + ".TA" for name in company_names]
+
+            # Reverse the mapping to get company names from tickers
+            ticker_to_company_name = {v: k for k, v in ticker_mapping.items()}
 
             # Define date range
             start_date, end_date = datetime(2024, 1, 1), datetime.today()
@@ -478,6 +542,8 @@ def chatbot_response(user_input, model, ticker_mapping):
             # Container for data
             data_frames = []
 
+            # Collect data and metadata for each ticker
+            comparison_summary = []
             for ticker in tickers:
                 try:
                     # Get the best model for the company
@@ -486,7 +552,28 @@ def chatbot_response(user_input, model, ticker_mapping):
                     # Extract the data
                     data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
                     if not data.empty:
+                        # Add to data frames for plotting
                         data_frames.append((ticker, stocks_model, data))
+
+                        # Prepare summary data
+                        company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
+                        company_summary = {
+                            "Company Name": company_name,
+                            "Model Used": stocks_model,
+                            "Actual Values Summary": {
+                                "Min": data["Actual"].min(),
+                                "Max": data["Actual"].max(),
+                                "Mean": data["Actual"].mean(),
+                                "Trend": "upward" if data["Actual"].iloc[-1] > data["Actual"].iloc[0] else "downward"
+                            },
+                            "Predicted Values Summary": {
+                                "Min": data["Predicted"].min(),
+                                "Max": data["Predicted"].max(),
+                                "Mean": data["Predicted"].mean(),
+                                "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
+                            }
+                        }
+                        comparison_summary.append(company_summary)
                     else:
                         st.warning(f"No data available for ticker {ticker}. Skipping.")
                 except Exception as e:
@@ -494,21 +581,22 @@ def chatbot_response(user_input, model, ticker_mapping):
 
             # Check if data exists
             if not data_frames:
-                return "No data available for the selected tickers."
+                return {"text": "No data available for the selected companies."}
 
             # Plot comparison graph
             fig, ax = plt.subplots(figsize=(12, 8))
             for ticker, stocks_model, data in data_frames:
+                company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
                 ax.plot(
                     pd.to_datetime(data["Date"]),
                     data["Actual"],
-                    label=f"{ticker} Actual ({stocks_model})",
+                    label=f"{company_name} Actual ({stocks_model})",
                     linestyle="-"
                 )
                 ax.plot(
                     pd.to_datetime(data["Date"]),
                     data["Predicted"],
-                    label=f"{ticker} Predicted ({stocks_model})",
+                    label=f"{company_name} Predicted ({stocks_model})",
                     linestyle="--"
                 )
 
@@ -525,7 +613,39 @@ def chatbot_response(user_input, model, ticker_mapping):
 
             # Generate HTML for the graph
             image_html, image_base64 = display_graph(buffer)
-            return {"html": image_html, "image": image_base64}
+
+            # Format comparison summary for the generative model
+            formatted_comparison_input = (
+                f"Comparison of multiple stocks:\n\n"
+                + "\n\n".join(
+                    f"Company: {summary['Company Name']}\n"
+                    f"Model Used: {summary['Model Used']}\n"
+                    f"Actual Values Summary:\n"
+                    f"  - Min: {summary['Actual Values Summary']['Min']:.2f}\n"
+                    f"  - Max: {summary['Actual Values Summary']['Max']:.2f}\n"
+                    f"  - Mean: {summary['Actual Values Summary']['Mean']:.2f}\n"
+                    f"  - Trend: {summary['Actual Values Summary']['Trend']}\n"
+                    f"Predicted Values Summary:\n"
+                    f"  - Min: {summary['Predicted Values Summary']['Min']:.2f}\n"
+                    f"  - Max: {summary['Predicted Values Summary']['Max']:.2f}\n"
+                    f"  - Mean: {summary['Predicted Values Summary']['Mean']:.2f}\n"
+                    f"  - Trend: {summary['Predicted Values Summary']['Trend']}"
+                    for summary in comparison_summary
+                )
+                + "\n\nPlease provide an analysis comparing the trends, values, and predictions for these companies, "
+                "highlight which company seems better based on actual values, and include any interesting observations."
+            )
+
+            # Generate textual analysis
+            generated_comparison_text = model.generate_content(formatted_comparison_input).text
+
+            # Return both graph and text
+            return {
+                "html": image_html,
+                "image": image_base64,
+                "text": generated_comparison_text
+            }
+
 
 
 
@@ -562,11 +682,18 @@ def main():
             elif "image" in message:
                 image_html = f'<img src="data:image/png;base64,{message["image"]}" alt="Stock Plot">'
                 st.markdown(image_html, unsafe_allow_html=True)
+            elif "actual_image" in message and "predicted_image" in message and "content" in message:
+                # Render actual values graph
+                actual_image_html = f'<img src="data:image/png;base64,{message["actual_image"]}" alt="Actual Values Plot">'
+                st.markdown(actual_image_html, unsafe_allow_html=True)
+                # Render predicted values graph
+                predicted_image_html = f'<img src="data:image/png;base64,{message["predicted_image"]}" alt="Predicted Values Plot">'
+                st.markdown(predicted_image_html, unsafe_allow_html=True)
+                st.markdown(message["content"])
             elif "actual_image" in message and "predicted_image" in message:
                 # Render actual values graph
                 actual_image_html = f'<img src="data:image/png;base64,{message["actual_image"]}" alt="Actual Values Plot">'
                 st.markdown(actual_image_html, unsafe_allow_html=True)
-
                 # Render predicted values graph
                 predicted_image_html = f'<img src="data:image/png;base64,{message["predicted_image"]}" alt="Predicted Values Plot">'
                 st.markdown(predicted_image_html, unsafe_allow_html=True)
@@ -600,7 +727,26 @@ def main():
                     "image": response["image"],
                     "content": response["text"],
                 })
-            elif "actual_image" in response and "predicted_image" in response:
+            elif "actual_image" in response and "predicted_image" in response and "text" in response:
+                # Display actual values graph
+                actual_image_html = f'<img src="data:image/png;base64,{response["actual_image"]}" alt="Actual Values Plot">'
+                st.markdown(actual_image_html, unsafe_allow_html=True)
+
+                # Display predicted values graph
+                predicted_image_html = f'<img src="data:image/png;base64,{response["predicted_image"]}" alt="Predicted Values Plot">'
+                st.markdown(predicted_image_html, unsafe_allow_html=True)
+
+                # Display the generated text
+                st.markdown(response["text"])
+
+                # Save both graphs and text to chat history
+                st.session_state.chat_history.append({
+                    "role": "assistant",
+                    "actual_image": response["actual_image"],
+                    "predicted_image": response["predicted_image"],
+                    "content": response["text"]
+                })
+            elif "actual_image" in response and "predicted_image" in response and "text" not in response:
                 # Display actual values graph
                 actual_image_html = f'<img src="data:image/png;base64,{response["actual_image"]}" alt="Actual Values Plot">'
                 st.markdown(actual_image_html, unsafe_allow_html=True)
