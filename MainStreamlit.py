@@ -17,7 +17,7 @@ API_KEY = 'AIzaSyCTNncuxKui7XIzrZWt1o_EtLIxiew8qtE'
 MAPPING_FILE_PATH = "company_name_to_ticker.xlsx"
 LSTM_CSV_PATH = "/workspaces/FinalProj/LSTM/actual_vs_pred_stocks.csv"
 XGBOOST_CSV_PATH = "/workspaces/FinalProj/XGBoost/model_XGBoost_metrics_and_predictions.csv"
-LIGHTGBM_CSV_PATH = "/workspaces/FinalProj/LightGBM/metrics_and_predictions.csv"
+LIGHTGBM_CSV_PATH = "/workspaces/FinalProj/LightGBM/LightGBM_metrics_and_predictions.csv"
 BEST_MODEL_CSV = "/workspaces/FinalProj/Metrics/best_model_per_stock.csv"
 SECTORS_DF_PATH = "sectors_df.csv"
 # Initialize API and Streamlit
