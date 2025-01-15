@@ -182,24 +182,83 @@ def process_model_data(company_data, start_date):
 
 # Generate and Display Graph
 def generate_graph(data, title):
+    """
+    Generate a graph with consistent x-axis formatting (YYYY-MM) and dynamic date range.
+    
+    Args:
+        data: DataFrame containing "Date", "Actual", and "Predicted"
+        title: Title of the graph
+    
+    Returns:
+        BytesIO buffer with the graph image
+    """
+    # Parse dates
+    data["Date"] = pd.to_datetime(data["Date"], dayfirst=True)
+    
+    # Determine dynamic start_date and end_date
+    start_date = data["Date"].min()
+    end_date = data["Date"].max()
+    
+    # Filter data based on the dynamic range
+    filtered_data = data[(data["Date"] >= start_date) & (data["Date"] <= end_date)]
+    
+    # Create the plot
     fig, ax = plt.subplots(figsize=(12, 8))
-    ax.plot(data["Date"], data["Actual"], label="Actual", linestyle="-", color="blue")
-    ax.plot(data["Date"], data["Predicted"], label="Predicted", linestyle="--", color="orange")
+    ax.plot(filtered_data["Date"], filtered_data["Actual"], label="Actual", linestyle="-", color="blue")
+    ax.plot(filtered_data["Date"], filtered_data["Predicted"], label="Predicted", linestyle="--", color="orange")
+    
+    # Set x-axis limits dynamically
+    ax.set_xlim([start_date, end_date])
+    
+    # Format the x-axis as YYYY-MM
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))  # Adjust interval as needed
+    plt.xticks(rotation=45)  # Rotate for readability
+    
+    # Add labels and title
     ax.set_title(title)
     ax.set_xlabel("Date")
     ax.set_ylabel("Price")
     ax.legend()
-
+    
+    # Save the plot to a buffer
     buffer = BytesIO()
     plt.savefig(buffer, format="png")
     buffer.seek(0)
     plt.close(fig)
     return buffer
 
+
 def display_graph(buffer):
     image_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
     image_html = f'<img src="data:image/png;base64,{image_base64}" alt="Stock Plot">'
     return image_html,image_base64
+
+def synchronize_x_axis(dataframes):
+    """
+    Synchronize the x-axis (Date) across all dataframes by creating a unified date range.
+    
+    Args:
+        dataframes (list): List of pandas DataFrames to synchronize.
+    
+    Returns:
+        list: List of synchronized DataFrames.
+    """
+    # Determine the common date range
+    all_dates = pd.concat([df['Date'] for df in dataframes])
+    unified_date_range = pd.date_range(start=all_dates.min(), end=all_dates.max())
+
+    # Align each dataframe to the unified date range
+    synchronized_dataframes = []
+    for df in dataframes:
+        df.set_index('Date', inplace=True)
+        df = df.reindex(unified_date_range).reset_index()
+        df.rename(columns={'index': 'Date'}, inplace=True)
+        df.fillna(method='ffill', inplace=True)  # Forward-fill to handle missing data
+        synchronized_dataframes.append(df)
+
+    return synchronized_dataframes
+
 # New Function to Fetch Actual Values by Sector
 def get_actual_values_by_sector(sector, sectors_df_path=SECTORS_DF_PATH, start_date=None, end_date=None):
     try:
@@ -337,6 +396,75 @@ def identify_model_misses(data, threshold=0.1):
     data['Absolute_Error'] = abs(data['Actual'] - data['Predicted'])
     significant_misses = data[data['Absolute_Error'] > threshold * data['Actual']]
     return significant_misses
+def synchronize_and_plot_lstm_adjusted_comparison(dataframes, company_models, title):
+    """
+    Synchronize the date range across multiple dataframes by modifying only LSTM/GRU models.
+    
+    Args:
+        dataframes: List of tuples (ticker, stocks_model, data)
+        company_models: Dictionary of company and best model type
+        title: Title for the plot
+    """
+    # Find the unified date range
+    all_dates = pd.concat([df[2]['Date'] for df in dataframes])
+    unified_start_date = all_dates.min()
+    unified_end_date = all_dates.max()
+
+    # Synchronize data
+    synchronized_dataframes = []
+    for ticker, stocks_model, data in dataframes:
+        # Convert Date to datetime
+        data["Date"] = pd.to_datetime(data["Date"], dayfirst=True)
+        
+        if stocks_model in ["LSTM", "GRU"]:
+            # Extend Actual values backward
+            extended_data = data.copy()
+            first_actual_value = extended_data["Actual"].iloc[0]
+            extended_data = pd.concat([
+                pd.DataFrame({"Date": pd.date_range(unified_start_date, extended_data["Date"].iloc[0] - pd.Timedelta(days=1)),
+                              "Actual": first_actual_value}),
+                extended_data
+            ], ignore_index=True)
+            # Truncate data to unified_end_date
+            extended_data = extended_data[extended_data["Date"] <= unified_end_date]
+            synchronized_dataframes.append((ticker, stocks_model, extended_data))
+        else:
+            # For other models, truncate directly
+            truncated_data = data[(data["Date"] >= unified_start_date) & (data["Date"] <= unified_end_date)]
+            synchronized_dataframes.append((ticker, stocks_model, truncated_data))
+    
+    # Plot comparison
+    fig, ax = plt.subplots(figsize=(12, 8))
+    for ticker, stocks_model, data in synchronized_dataframes:
+        company_name = ticker.replace(".TA", "")  # Replace ".TA" to get the company name
+        ax.plot(
+            data["Date"],
+            data["Actual"],
+            label=f"{company_name} Actual ({stocks_model})",
+            linestyle="-"
+        )
+        ax.plot(
+            data["Date"],
+            data["Predicted"],
+            label=f"{company_name} Predicted ({stocks_model})",
+            linestyle="--"
+        )
+    
+    # Set titles and labels
+    ax.set_title(title)
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Price")
+    ax.legend()
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+    plt.xticks(rotation=45)
+
+    # Save and return the plot
+    buffer = BytesIO()
+    plt.savefig(buffer, format="png")
+    buffer.seek(0)
+    plt.close(fig)
+    return buffer
 
 
 # Chatbot Response Logic
