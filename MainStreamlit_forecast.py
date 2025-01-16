@@ -276,54 +276,57 @@ def generate_graph_with_forecast(stock, model):
         ignore_index=True,
     ).sort_values(by="Date")
 
-    # Step 5: Plot the data
-    fig, ax = plt.subplots(figsize=(12, 8))
+    # # Step 5: Plot the data
+    # fig, ax = plt.subplots(figsize=(12, 8))
 
-    # Plot actual values
-    ax.plot(
-        combined_data["Date"],
-        combined_data["Actual"],
-        label="Actual",
-        color="blue",
-        linewidth=1.5,
-    )
+    # # Plot actual values
+    # ax.plot(
+    #     combined_data["Date"],
+    #     combined_data["Actual"],
+    #     label="Actual",
+    #     color="blue",
+    #     linewidth=1.5,
+    # )
 
-    # Plot predicted values
-    ax.plot(
-        combined_data["Date"],
-        combined_data["Predicted"],
-        label="Predicted",
-        color="orange",
-        linestyle="--",
-        linewidth=1.5,
-    )
+    # # Plot predicted values
+    # ax.plot(
+    #     combined_data["Date"],
+    #     combined_data["Predicted"],
+    #     label="Predicted",
+    #     color="orange",
+    #     linestyle="--",
+    #     linewidth=1.5,
+    # )
 
     # Plot forecasted values
     if "Forecasted" in combined_data:
-        ax.plot(
-            combined_data["Date"],
-            combined_data["Forecasted"],
-            label="Forecasted",
-            color="green",
-            linestyle=":",
-            linewidth=1.5,
+        st.line_chart(
+            data=combined_data,
+            x="Date",
+            y=["Actual", "Predicted", "Forecasted"]
+        )
+    else:
+        st.line_chart(
+            data=combined_data,
+            x="Date",
+            y=["Actual", "Predicted"]
         )
 
-    # Step 6: Set plot details
-    ax.set_title(f"Actual, Predicted, and Forecasted Values for {stock} ({model})")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Value")
-    ax.legend()
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-    plt.xticks(rotation=45)
+    # # Step 6: Set plot details
+    # ax.set_title(f"Actual, Predicted, and Forecasted Values for {stock} ({model})")
+    # ax.set_xlabel("Date")
+    # ax.set_ylabel("Value")
+    # ax.legend()
+    # ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    # plt.xticks(rotation=45)
 
     # Step 7: Save the plot to a buffer
-    buffer = BytesIO()
-    plt.savefig(buffer, format="png")
-    buffer.seek(0)
-    plt.close(fig)
+    # buffer = BytesIO()
+    # plt.savefig(buffer, format="png")
+    # buffer.seek(0)
+    # plt.close(fig)
 
-    return buffer
+    # return buffer
 
 
 
