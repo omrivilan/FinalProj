@@ -1,0 +1,7 @@
+[theme]
+base = "dark"  # "light" or "dark"
+primaryColor = "#636EFA"  # Buttons and highlights
+backgroundColor = "#FFFFFF"  # Main app background
+secondaryBackgroundColor = "#F5F5F5"  # Sidebar or card backgrounds
+textColor = "#333333"  # Default text color
+font = "sans serif"  # "sans serif", "serif", or "monospace"
