@@ -79,21 +79,23 @@ def extract_company_names(user_input):
     user_input = user_input.lower()
     delimiters = [
         "compare", "comparison", "difference between", "versus", "vs",
-        ",", "&", "and", "And", "AND", "compare me the stocks of", "with"
+        ",", "&", "and", "And", "AND", "compare me the stocks of"
     ]
-
     for delimiter in delimiters:
         user_input = user_input.replace(delimiter, ",")
 
     companies = user_input.split(",")
     companies = [company.strip() for company in companies if company.strip()]
-    
+    words_list = []
+    for company in companies:
+        words_list += company.split()
+
     # Load ticker mapping
     ticker_mapping = load_ticker_mapping()
 
     # Match substrings to valid company names
     valid_companies = []
-    for company in companies:
+    for company in words_list:
         for valid_name in ticker_mapping.keys():
             if valid_name in company.upper():
                 valid_companies.append(valid_name)
@@ -104,7 +106,7 @@ def extract_company_names(user_input):
     compare_set = set(valid_companies) | set(st.session_state.mentioned_tickers)
     if len(compare_set) < 2:
         raise ValueError("At least two valid companies are required for comparison.")
-    if "them" or "it" or "previously stocks" in companies:
+    if "them" or "it" or "previously stocks" or "previous stocks" in companies:
         return st.session_state.mentioned_tickers
     else:
         return valid_companies
@@ -701,7 +703,7 @@ def chatbot_response(user_input, model, ticker_mapping):
         intent_data = detect_intent(user_input)
         if intent_data["intent"] == "sector_values":
             sector_name = intent_data["sector"]
-            start_date, end_date = datetime(2024, 1, 1), datetime.today()
+            start_date, end_date = datetime(2024, 1, 1), datetime(2024, 10, 1)
             
             # Load sector and best model data
             sector_data_actual = get_actual_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
@@ -897,7 +899,7 @@ def chatbot_response(user_input, model, ticker_mapping):
             best_model_df = pd.read_csv(BEST_MODEL_CSV)
             stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
 
-            start_date, end_date = datetime(2024, 1, 1), datetime.today()
+            start_date, end_date = datetime(2024, 1, 1), datetime(2024, 10, 1)
             data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
 
             fig, forecasted = generate_graph_with_forecast(ticker, company_name, stocks_model)
@@ -998,7 +1000,7 @@ def chatbot_response(user_input, model, ticker_mapping):
             ticker_to_company_name = {v: k for k, v in ticker_mapping.items()}
 
             # Define date range
-            start_date, end_date = datetime(2024, 1, 1), datetime.today()
+            start_date, end_date = datetime(2024, 1, 1), datetime(2024, 10, 1)
 
             # Load the best model mapping
             best_model_df = pd.read_csv(BEST_MODEL_CSV)
