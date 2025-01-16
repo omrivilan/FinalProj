@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 import plotly.graph_objects as go
 import warnings
 import time
+import emoji
 
 warnings.filterwarnings("ignore")
 
@@ -512,7 +513,7 @@ def get_actual_values_by_sector(sector, sectors_df_path=SECTORS_DF_PATH, start_d
         return result_df
 
     except Exception as e:
-        st.error(f"Error processing sector data: {e}")
+        # st.error(f"Error processing sector data: {e}")
         return None
 
 def get_predicted_values_by_sector(sector, sectors_df_path=SECTORS_DF_PATH, start_date=None, end_date=None):
@@ -566,7 +567,7 @@ def get_predicted_values_by_sector(sector, sectors_df_path=SECTORS_DF_PATH, star
         return result_df
 
     except Exception as e:
-        st.error(f"Error processing sector predictions: {e}")
+        # st.error(f"Error processing sector predictions: {e}")
         return None
 
 def generate_predicted_values_graph(data, sector_name):
@@ -835,7 +836,8 @@ def chatbot_response(user_input, model, ticker_mapping):
                     fig_forecasted.update_xaxes(tickformat='%b %d, %Y', tickangle=45)
 
                 except Exception as e:
-                    st.error(f"Could not process forecasted values for {ticker}: {e}")
+                    # st.error(f"Could not process forecasted values for {ticker}: {e}")
+                    return None
 
             # ax_forecasted.set_title(f"Forecasted Values for {sector_name} Sector")
             # ax_forecasted.set_xlabel("Date")
@@ -1072,7 +1074,8 @@ def chatbot_response(user_input, model, ticker_mapping):
                         }
                         comparison_summary.append(company_summary)
                 except Exception as e:
-                    st.error(f"Error processing {ticker}: {e}")
+                    # st.error(f"Error processing {ticker}: {e}")
+                    return None
                 
 
             for ticker, stocks_model, data in combined_data_frames:
@@ -1151,9 +1154,11 @@ def chatbot_response(user_input, model, ticker_mapping):
             return {"text": generated_comparison_text, "graphs": [fig_comparison]}
 
         else:
-            return {"text": model.generate_content(user_input).text}
+            return {"text": model.generate_content(user_input + 'add a sad emoji wherever you find fitting. include it without saying you did, just respobd normaly and add it as well.').text}
     except Exception as e:
-            return {"text": f"Error: {str(e)}"}
+            resp = emoji.emojize("Oh no! An exception! :face_screaming_in_fear: Please try again!")
+            response = {"text" : resp}
+            return response
 
 
     
