@@ -72,8 +72,9 @@ def extract_company_names(user_input):
     user_input = user_input.lower()
     delimiters = [
         "compare", "comparison", "difference between", "versus", "vs",
-        ",", "&", "and", "And", "AND", "compare me the stocks of"
+        ",", "&", "and", "And", "AND", "compare me the stocks of", "with"
     ]
+
     for delimiter in delimiters:
         user_input = user_input.replace(delimiter, ",")
 
@@ -121,7 +122,7 @@ def detect_intent(user_input):
         raise ValueError("Please specify the sector name for the query.")
     # Expanded keywords for comparison requests
     compare_keywords = ["compare","comparison", "difference between", "versus",
-     "vs", ",","&","and","And","AND", "compare me the stocks of"]
+     "vs", ",","&","and","And","AND", "compare me the stocks of", "with"]
     if any(keyword in user_input for keyword in compare_keywords):
         return {"intent": "compare", "companies": extract_company_names(user_input)}
     graph_keywords = ["graph", "plot", "visualize", "show", "chart", "chart of", "plot of", "graph of"]
@@ -210,13 +211,16 @@ def process_model_data(company_data, start_date):
     })
     return pd.merge(actual_df, predicted_df, on="Date")
 
-def extract_forecasted_values(stock, last_predicted_date):
+def extract_forecasted_values(stock, last_predicted_date, actual_predicted):
     """
     Extract forecasted values for a given stock and align the forecasted dates with last_predicted_date.
+    The first forecasted value is adjusted to match the last predicted value from the actual_predicted DataFrame,
+    and the difference is propagated to all subsequent forecasted values.
 
     Args:
         stock (str): Ticker of the stock.
         last_predicted_date (datetime): The last date in the predicted data.
+        actual_predicted (DataFrame): DataFrame containing actual and predicted values.
 
     Returns:
         DataFrame: A DataFrame containing 'Date' and 'Forecasted' columns.
@@ -262,12 +266,18 @@ def extract_forecasted_values(stock, last_predicted_date):
         # Drop the "Day" column
         filtered_forecast = filtered_forecast[["Date", "Forecast"]]
 
+    # Adjust the forecasted values using the last predicted value from actual_predicted
+    last_predicted_value = actual_predicted.loc[actual_predicted["Date"] == last_predicted_date, "Predicted"].values[0]
+    adjustment = last_predicted_value - filtered_forecast["Forecast"].iloc[0]
+    filtered_forecast["Forecast"] += adjustment
+
     # Rename "Forecast" column to "Forecasted" for consistency
     filtered_forecast.rename(columns={"Forecast": "Forecasted"}, inplace=True)
 
     return filtered_forecast
 
-def generate_graph_with_forecast(stock, model):
+
+def generate_graph_with_forecast(stock, company_name, model):
     """
     Generates a graph showing actual, predicted, and forecasted values for a stock.
 
@@ -288,7 +298,7 @@ def generate_graph_with_forecast(stock, model):
 
     # Step 2: Extract forecasted values
     last_predicted_date = actual_predicted["Date"].max()
-    forecasted = extract_forecasted_values(stock, last_predicted_date)
+    forecasted = extract_forecasted_values(stock, last_predicted_date, actual_predicted)
 
     # Step 3: Align forecasted dates
     forecasted["Date"] = pd.date_range(
@@ -340,7 +350,7 @@ def generate_graph_with_forecast(stock, model):
         )
 
     # Step 6: Set plot details
-    ax.set_title(f"Actual, Predicted, and Forecasted Values for {stock} ({model})")
+    ax.set_title(f"Actual, Predicted, and Forecasted Values for {company_name} ({model})")
     ax.set_xlabel("Date")
     ax.set_ylabel("Value")
     ax.legend()
@@ -353,7 +363,7 @@ def generate_graph_with_forecast(stock, model):
     buffer.seek(0)
     plt.close(fig)
 
-    return buffer
+    return buffer, forecasted
 
 
 
@@ -564,17 +574,6 @@ def generate_predicted_values_graph(data, sector_name):
     return buffer
 
 
-# Helper Functions
-def calculate_monthly_trends(data):
-    data['Month'] = pd.to_datetime(data['Date']).dt.to_period('M')
-    trends = data.groupby('Month')['Actual'].agg(['first', 'last']).reset_index()
-    trends['Trend'] = trends['last'] - trends['first']
-    return trends
-
-def identify_model_misses(data, threshold=0.1):
-    data['Absolute_Error'] = abs(data['Actual'] - data['Predicted'])
-    significant_misses = data[data['Absolute_Error'] > threshold * data['Actual']]
-    return significant_misses
 def synchronize_and_plot_lstm_adjusted_comparison(dataframes, company_models, title):
     """
     Synchronize the date range across multiple dataframes by modifying only LSTM/GRU models.
@@ -660,7 +659,10 @@ def chatbot_response(user_input, model, ticker_mapping):
         if intent_data["intent"] == "sector_values":
             sector_name = intent_data["sector"]
             start_date, end_date = datetime(2024, 1, 1), datetime.today()
+            
+            # Load sector and best model data
             sector_data_actual = get_actual_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
+            best_model_df = pd.read_csv("/workspaces/FinalProj/Metrics/without_ARIMA_model_to_stock.csv")
             sector_data_actual["Date"] = pd.to_datetime(sector_data_actual["Date"], dayfirst=True)
 
             # Reverse the mapping to get company names from tickers
@@ -740,6 +742,62 @@ def chatbot_response(user_input, model, ticker_mapping):
 
                 image_html_predicted, image_base64_predicted = display_graph(buffer_predicted)
 
+            # Generate Forecasted Values Graph and Collect Summary
+            forecasted_values_summary = []
+            fig_forecasted, ax_forecasted = plt.subplots(figsize=(12, 8))
+            for ticker in sector_data_actual["Ticker"].unique():
+                try:
+                    # Determine the best model for the company
+                    stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
+
+                    # Extract actual-predicted data and forecasted values
+                    actual_predicted = extract_data_by_model(ticker, stocks_model, start_date, end_date)
+                    if actual_predicted.empty:
+                        continue
+
+                    last_predicted_date = actual_predicted["Date"].max()
+                    forecasted = extract_forecasted_values(ticker, last_predicted_date, actual_predicted)
+
+                    # Align forecasted dates to start from 2024-09-01
+                    forecast_start_date = datetime(2024, 9, 1)
+                    forecasted["Date"] = pd.date_range(start=forecast_start_date, periods=len(forecasted), freq="D")
+
+                    # Plot forecasted values
+                    company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
+                    ax_forecasted.plot(pd.to_datetime(forecasted["Date"]), forecasted["Forecasted"], label=company_name)
+
+                    # Collect forecasted values summary
+                    forecasted_summary = {
+                        "Company Name": company_name,
+                        "Min": forecasted["Forecasted"].min(),
+                        "Max": forecasted["Forecasted"].max(),
+                        "Mean": forecasted["Forecasted"].mean(),
+                        "Trend": "upward" if forecasted["Forecasted"].iloc[-1] > forecasted["Forecasted"].iloc[0] else "downward"
+                    }
+                    forecasted_values_summary.append(forecasted_summary)
+
+                except Exception as e:
+                    st.error(f"Could not process forecasted values for {ticker}: {e}")
+
+            ax_forecasted.set_title(f"Forecasted Values for {sector_name} Sector")
+            ax_forecasted.set_xlabel("Date")
+            ax_forecasted.set_ylabel("Forecasted Value")
+            ax_forecasted.legend()
+
+            # Format x-axis for better readability
+            dates_forecasted = pd.date_range(start=forecast_start_date, periods=len(forecasted), freq="D")
+            tick_positions_forecasted = dates_forecasted[::5]
+            ax_forecasted.set_xticks(tick_positions_forecasted)
+            ax_forecasted.set_xticklabels(tick_positions_forecasted.strftime('%b %d, %Y'))
+            plt.xticks(rotation=45)
+
+            buffer_forecasted = BytesIO()
+            plt.savefig(buffer_forecasted, format="png")
+            buffer_forecasted.seek(0)
+            plt.close(fig_forecasted)
+
+            image_html_forecasted, image_base64_forecasted = display_graph(buffer_forecasted)
+
             # Format sector-wide summary for text generation
             formatted_sector_input = (
                 f"Sector-wide analysis for {sector_name} sector:\n\n"
@@ -757,22 +815,32 @@ def chatbot_response(user_input, model, ticker_mapping):
                     f"Mean: {summary['Mean']:.2f}, Trend: {summary['Trend']}"
                     for summary in predicted_values_summary
                 ) +
-                "\n\nPlease provide an analysis comparing the trends, values, and predictions for these companies, "
-                "highlight which companies seem to be performing better in the sector, and suggest any insights or recommendations."
+                "\n\nForecasted Values Summary:\n" +
+                "\n".join(
+                    f"- {summary['Company Name']}:\n"
+                    f"  Min: {summary['Min']:.2f}, Max: {summary['Max']:.2f}, "
+                    f"Mean: {summary['Mean']:.2f}, Trend: {summary['Trend']}"
+                    for summary in forecasted_values_summary
+                ) +
+                "\n\nPlease provide an analysis comparing the trends, actual values, predictions and forecasted values for these companies, "
+                "highlight which companies seem to be performing better in the sector, and suggest any insights about forecast."
             )
 
             # Generate textual analysis
             generated_sector_text = model.generate_content(formatted_sector_input).text
-            
 
-            # Return both graphs and text
+            # Return all graphs and text
             return {
                 "actual_html": image_html_actual,
                 "actual_image": image_base64_actual,
                 "predicted_html": image_html_predicted,
                 "predicted_image": image_base64_predicted,
+                "forecasted_html": image_html_forecasted,
+                "forecasted_image": image_base64_forecasted,
                 "text": generated_sector_text
             }
+
+
 
 
 
@@ -786,7 +854,7 @@ def chatbot_response(user_input, model, ticker_mapping):
             data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
 
             # Generate the graph
-            buffer = generate_graph_with_forecast(ticker, stocks_model)
+            buffer, forecasted = generate_graph_with_forecast(ticker,company_name, stocks_model)
             image_html, image_base64 = display_graph(buffer)
 
             # Reformat the data for better text generation
@@ -806,6 +874,12 @@ def chatbot_response(user_input, model, ticker_mapping):
                     "Max": data["Predicted"].max(),
                     "Mean": data["Predicted"].mean(),
                     "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
+                },
+                "Forecasted Values Summary": {
+                    "Min": forecasted["Forecasted"].min(),
+                    "Max": forecasted["Forecasted"].max(),
+                    "Mean": forecasted["Forecasted"].mean(),
+                    "Trend": "upward" if forecasted["Forecasted"].iloc[-1] > forecasted["Forecasted"].iloc[0] else "downward"
                 }
             }
 
@@ -825,7 +899,12 @@ def chatbot_response(user_input, model, ticker_mapping):
                 f"  - Max: {summary_data['Predicted Values Summary']['Max']:.2f}\n"
                 f"  - Mean: {summary_data['Predicted Values Summary']['Mean']:.2f}\n"
                 f"  - Trend: {summary_data['Predicted Values Summary']['Trend']}\n\n"
-                "Please provide an analysis discussing the trends, values, and predictions for this company, "
+                 f"Forecasted Values Summary:\n"
+                f"  - Min: {summary_data['Forecasted Values Summary']['Min']:.2f}\n"
+                f"  - Max: {summary_data['Forecasted Values Summary']['Max']:.2f}\n"
+                f"  - Mean: {summary_data['Forecasted Values Summary']['Mean']:.2f}\n"
+                f"  - Trend: {summary_data['Forecasted Values Summary']['Trend']}\n\n"
+                "Please provide an analysis discussing the trends, actual values, predictions and forecast values for this company, "
                 "with any observations about the stock's performance based on the provided data."
             )
 
@@ -857,20 +936,49 @@ def chatbot_response(user_input, model, ticker_mapping):
             best_model_df = pd.read_csv(BEST_MODEL_CSV)
 
             # Container for data
-            data_frames = []
-
-            # Collect data and metadata for each ticker
+            actual_predicted_data_frames = []
+            combined_data_frames = []
             comparison_summary = []
+
             for ticker in tickers:
                 try:
                     # Get the best model for the company
                     stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
 
-                    # Extract the data
-                    data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
-                    if not data.empty:
-                        # Add to data frames for plotting
-                        data_frames.append((ticker, stocks_model, data))
+                    # Extract actual and predicted data
+                    actual_predicted = extract_data_by_model(ticker, stocks_model, start_date, end_date)
+                    if not actual_predicted.empty:
+                        # Extract forecasted data
+                        last_predicted_date = actual_predicted["Date"].max()
+                        if isinstance(last_predicted_date, str):
+                            last_predicted_date = pd.to_datetime(last_predicted_date)
+                        if last_predicted_date not in actual_predicted["Date"].values:
+                            st.warning(f"No data available for last predicted date ({last_predicted_date}) for ticker {ticker}. Skipping.")
+                            continue
+
+                        # Retrieve the last predicted value
+                        last_predicted_value = actual_predicted.loc[actual_predicted["Date"] == last_predicted_date, "Predicted"].values[0]
+                        forecasted = extract_forecasted_values(ticker, last_predicted_date, actual_predicted)
+
+                        # Align forecasted dates
+                        forecasted["Date"] = pd.date_range(
+                            start=last_predicted_date + timedelta(days=1),
+                            periods=len(forecasted),
+                            freq="D"
+                        )
+
+                        # Combine actual, predicted, and forecasted data
+                        combined_data = pd.concat(
+                            [
+                                actual_predicted[["Date", "Actual", "Predicted"]],
+                                forecasted.rename(columns={"Forecast": "Forecasted"})[["Date", "Forecasted"]],
+                            ],
+                            ignore_index=True,
+                        ).sort_values(by="Date")
+
+                        # Add data to plotting containers
+                        actual_predicted_data_frames.append((ticker, stocks_model, actual_predicted))
+                        combined_data_frames.append((ticker, stocks_model, combined_data))
 
                         # Prepare summary data
                         company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
@@ -878,16 +986,22 @@ def chatbot_response(user_input, model, ticker_mapping):
                             "Company Name": company_name,
                             "Model Used": stocks_model,
                             "Actual Values Summary": {
-                                "Min": data["Actual"].min(),
-                                "Max": data["Actual"].max(),
-                                "Mean": data["Actual"].mean(),
-                                "Trend": "upward" if data["Actual"].iloc[-1] > data["Actual"].iloc[0] else "downward"
+                                "Min": actual_predicted["Actual"].min(),
+                                "Max": actual_predicted["Actual"].max(),
+                                "Mean": actual_predicted["Actual"].mean(),
+                                "Trend": "upward" if actual_predicted["Actual"].iloc[-1] > actual_predicted["Actual"].iloc[0] else "downward"
                             },
                             "Predicted Values Summary": {
-                                "Min": data["Predicted"].min(),
-                                "Max": data["Predicted"].max(),
-                                "Mean": data["Predicted"].mean(),
-                                "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
+                                "Min": actual_predicted["Predicted"].min(),
+                                "Max": actual_predicted["Predicted"].max(),
+                                "Mean": actual_predicted["Predicted"].mean(),
+                                "Trend": "upward" if actual_predicted["Predicted"].iloc[-1] > actual_predicted["Predicted"].iloc[0] else "downward"
+                            },
+                            "Forecasted Values Summary": {
+                                "Min": forecasted["Forecasted"].min(),
+                                "Max": forecasted["Forecasted"].max(),
+                                "Mean": forecasted["Forecasted"].mean(),
+                                "Trend": "upward" if forecasted["Forecasted"].iloc[-1] > forecasted["Forecasted"].iloc[0] else "downward"
                             }
                         }
                         comparison_summary.append(company_summary)
@@ -897,39 +1011,70 @@ def chatbot_response(user_input, model, ticker_mapping):
                     st.error(f"Error processing {ticker}: {e}")
 
             # Check if data exists
-            if not data_frames:
+            if not combined_data_frames:
                 return {"text": "No data available for the selected companies."}
 
-            # Plot comparison graph
-            fig, ax = plt.subplots(figsize=(12, 8))
-            for ticker, stocks_model, data in data_frames:
+            # Plot comparison graphs
+            # Graph 1: Actual vs Predicted
+            fig1, ax1 = plt.subplots(figsize=(12, 8))
+            for ticker, stocks_model, data in actual_predicted_data_frames:
                 company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
-                ax.plot(
+                ax1.plot(
                     pd.to_datetime(data["Date"]),
                     data["Actual"],
                     label=f"{company_name} Actual ({stocks_model})",
                     linestyle="-"
                 )
-                ax.plot(
+                ax1.plot(
                     pd.to_datetime(data["Date"]),
                     data["Predicted"],
                     label=f"{company_name} Predicted ({stocks_model})",
                     linestyle="--"
                 )
 
-            ax.set_title("Stock Price Comparison (Actual vs Predicted)")
-            ax.set_xlabel("Date")
-            ax.set_ylabel("Price")
-            ax.legend()
+            ax1.set_title("Stock Price Comparison (Actual vs Predicted)")
+            ax1.set_xlabel("Date")
+            ax1.set_ylabel("Price")
+            ax1.legend()
 
-            # Save the plot to a buffer
-            buffer = BytesIO()
-            plt.savefig(buffer, format="png")
-            buffer.seek(0)
-            plt.close(fig)
+            buffer1 = BytesIO()
+            plt.savefig(buffer1, format="png")
+            buffer1.seek(0)
+            plt.close(fig1)
 
             # Generate HTML for the graph
-            image_html, image_base64 = display_graph(buffer)
+            image_html1, image_base64_1 = display_graph(buffer1)
+
+            # Graph 2: Actual vs Forecasted
+            fig2, ax2 = plt.subplots(figsize=(12, 8))
+            for ticker, stocks_model, data in combined_data_frames:
+                company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
+                ax2.plot(
+                    pd.to_datetime(data["Date"]),
+                    data["Actual"],
+                    label=f"{company_name} Actual ({stocks_model})",
+                    linestyle="-"
+                )
+                if "Forecasted" in data:
+                    ax2.plot(
+                        pd.to_datetime(data["Date"]),
+                        data["Forecasted"],
+                        label=f"{company_name} Forecasted ({stocks_model})",
+                        linestyle=":"
+                    )
+
+            ax2.set_title("Stock Price Comparison (Actual vs Forecasted)")
+            ax2.set_xlabel("Date")
+            ax2.set_ylabel("Price")
+            ax2.legend()
+
+            buffer2 = BytesIO()
+            plt.savefig(buffer2, format="png")
+            buffer2.seek(0)
+            plt.close(fig2)
+
+            # Generate HTML for the graph
+            image_html2, image_base64_2 = display_graph(buffer2)
 
             # Format comparison summary for the generative model
             formatted_comparison_input = (
@@ -945,25 +1090,30 @@ def chatbot_response(user_input, model, ticker_mapping):
                     f"Predicted Values Summary:\n"
                     f"  - Min: {summary['Predicted Values Summary']['Min']:.2f}\n"
                     f"  - Max: {summary['Predicted Values Summary']['Max']:.2f}\n"
-                    f"  - Mean: {summary['Predicted Values Summary']['Mean']:.2f}\n"
-                    f"  - Trend: {summary['Predicted Values Summary']['Trend']}"
+                    f"  - Mean: {summary['Predicted Values Summary']['Mean']:.2f}\n\n"
+                    f"Forecasted Values Summary:\n"
+                    f"  - Min: {summary['Forecasted Values Summary']['Min']:.2f}\n"
+                    f"  - Max: {summary['Forecasted Values Summary']['Max']:.2f}\n"
+                    f"  - Mean: {summary['Forecasted Values Summary']['Mean']:.2f}\n"
+                    f"  - Trend: {summary['Forecasted Values Summary']['Trend']}\n"
                     for summary in comparison_summary
                 )
                 + "\n\nPlease provide an analysis comparing the trends, values, and predictions for these companies, "
-                "highlight which company seems better based on actual values, and include any interesting observations."
+                "highlight which company seems better based on actual, predicted, and forecasted values, and forecasted values compared to actual values"
+                "and include any interesting observations about their performance or expected future behavior."
             )
 
             # Generate textual analysis
             generated_comparison_text = model.generate_content(formatted_comparison_input).text
 
-            # Return both graph and text
+            # Return both graphs and text
             return {
-                "html": image_html,
-                "image": image_base64,
+                "html1": image_html1,
+                "actual_image": image_base64_1,
+                "html2": image_html2,
+                "predicted_image": image_base64_2,
                 "text": generated_comparison_text
             }
-
-
 
 
         else:
@@ -999,6 +1149,22 @@ def main():
             elif "image" in message:
                 image_html = f'<img src="data:image/png;base64,{message["image"]}" alt="Stock Plot">'
                 st.markdown(image_html, unsafe_allow_html=True)
+            elif (
+                "actual_image" in message
+                and "predicted_image" in message
+                and "forecasted_image" in message
+                and "content" in message
+            ):
+                # Render actual values graph
+                actual_image_html = f'<img src="data:image/png;base64,{message["actual_image"]}" alt="Actual Values Plot">'
+                st.markdown(actual_image_html, unsafe_allow_html=True)
+                # Render predicted values graph
+                predicted_image_html = f'<img src="data:image/png;base64,{message["predicted_image"]}" alt="Predicted Values Plot">'
+                st.markdown(predicted_image_html, unsafe_allow_html=True)
+                # Render forecasted values graph
+                forecasted_image_html = f'<img src="data:image/png;base64,{message["forecasted_image"]}" alt="Forecasted Values Plot">'
+                st.markdown(forecasted_image_html, unsafe_allow_html=True)
+                st.markdown(message["content"])
             elif "actual_image" in message and "predicted_image" in message and "content" in message:
                 # Render actual values graph
                 actual_image_html = f'<img src="data:image/png;base64,{message["actual_image"]}" alt="Actual Values Plot">'
@@ -1030,7 +1196,36 @@ def main():
         response = chatbot_response(prompt, model, ticker_mapping)
         with st.chat_message("assistant"):
             # Check if response contains actual and predicted images
-            if "image" in response and "text" in response:
+            if (
+                "actual_image" in response
+                and "predicted_image" in response
+                and "forecasted_image" in response
+                and "text" in response
+            ):
+                # Display actual values graph
+                actual_image_html = f'<img src="data:image/png;base64,{response["actual_image"]}" alt="Actual Values Plot">'
+                st.markdown(actual_image_html, unsafe_allow_html=True)
+
+                # Display predicted values graph
+                predicted_image_html = f'<img src="data:image/png;base64,{response["predicted_image"]}" alt="Predicted Values Plot">'
+                st.markdown(predicted_image_html, unsafe_allow_html=True)
+
+                # Display forecasted values graph
+                forecasted_image_html = f'<img src="data:image/png;base64,{response["forecasted_image"]}" alt="Forecasted Values Plot">'
+                st.markdown(forecasted_image_html, unsafe_allow_html=True)
+
+                # Display the generated text
+                st.markdown(response["text"])
+
+                # Save all graphs and text to chat history
+                st.session_state.chat_history.append({
+                    "role": "assistant",
+                    "actual_image": response["actual_image"],
+                    "predicted_image": response["predicted_image"],
+                    "forecasted_image": response["forecasted_image"],
+                    "content": response["text"]
+                })
+            elif "image" in response and "text" in response:
                 # Display the graph
                 image_html = f'<img src="data:image/png;base64,{response["image"]}" alt="Stock Plot">'
                 st.markdown(image_html, unsafe_allow_html=True)
@@ -1063,6 +1258,7 @@ def main():
                     "predicted_image": response["predicted_image"],
                     "content": response["text"]
                 })
+                
             elif "actual_image" in response and "predicted_image" in response and "text" not in response:
                 # Display actual values graph
                 actual_image_html = f'<img src="data:image/png;base64,{response["actual_image"]}" alt="Actual Values Plot">'
