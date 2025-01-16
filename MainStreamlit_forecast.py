@@ -22,6 +22,9 @@ BEST_MODEL_CSV = "/workspaces/FinalProj/Metrics/best_model_per_stock.csv"
 SECTORS_DF_PATH = "sectors_df.csv"
 # Initialize API and Streamlit
 
+if "mentioned_tickers" not in st.session_state:
+    st.session_state.mentioned_tickers = set()
+
 def initialize_genai():
     genai.configure(api_key=API_KEY)
     return genai.GenerativeModel(
@@ -67,15 +70,41 @@ def extract_company_name(user_input):
 
 def extract_company_names(user_input):
     user_input = user_input.lower()
-    delimiters = ["compare","comparison", "difference between", "versus", "vs", ",","&","and","And","AND"]
+    delimiters = [
+        "compare", "comparison", "difference between", "versus", "vs",
+        ",", "&", "and", "And", "AND", "compare me the stocks of"
+    ]
     for delimiter in delimiters:
         user_input = user_input.replace(delimiter, ",")
 
     companies = user_input.split(",")
     companies = [company.strip() for company in companies if company.strip()]
-    if len(companies) < 2:
-        raise ValueError("At least two companies are required for comparison.")
-    return companies
+    
+    # Load ticker mapping
+    ticker_mapping = load_ticker_mapping()
+
+    # Match substrings to valid company names
+    valid_companies = []
+    for company in companies:
+        for valid_name in ticker_mapping.keys():
+            if valid_name in company.upper():
+                valid_companies.append(valid_name)
+                st.session_state.mentioned_tickers.add(valid_name)  # Add to global mentioned tickers
+                break  # Avoid duplicates if the same substring matches multiple names
+
+    print("Extracted companies:", companies)
+    print("Valid companies:", valid_companies)
+    print("Mentioned tickers:", st.session_state.mentioned_tickers)
+    print("companies : " + str(companies))
+
+    compare_set = set(valid_companies) | set(st.session_state.mentioned_tickers)
+    if len(compare_set) < 2:
+        raise ValueError("At least two valid companies are required for comparison.")
+    if "them" or "it" or "previously stocks" in companies:
+        return st.session_state.mentioned_tickers
+    else:
+        return valid_companies
+
 def detect_intent(user_input):
     """
     Detects the user's intent based on keywords and sentence patterns.
@@ -91,7 +120,8 @@ def detect_intent(user_input):
             return {"intent": "sector_values", "sector": sector_name}
         raise ValueError("Please specify the sector name for the query.")
     # Expanded keywords for comparison requests
-    compare_keywords = ["compare","comparison", "difference between", "versus", "vs", ",","&","and","And","AND"]
+    compare_keywords = ["compare","comparison", "difference between", "versus",
+     "vs", ",","&","and","And","AND", "compare me the stocks of"]
     if any(keyword in user_input for keyword in compare_keywords):
         return {"intent": "compare", "companies": extract_company_names(user_input)}
     graph_keywords = ["graph", "plot", "visualize", "show", "chart", "chart of", "plot of", "graph of"]
@@ -619,6 +649,13 @@ def synchronize_and_plot_lstm_adjusted_comparison(dataframes, company_models, ti
 # Chatbot Response Logic
 def chatbot_response(user_input, model, ticker_mapping):
     try:
+        # Include chat history in the prompt
+        history = "\n".join(
+            f"{msg['role']}: {msg['content']}" 
+            for msg in st.session_state.chat_history if 'content' in msg
+        )
+        prompt_with_history = f"{history}\nuser: {user_input}\nassistant:"
+        
         intent_data = detect_intent(user_input)
         if intent_data["intent"] == "sector_values":
             sector_name = intent_data["sector"]
@@ -805,6 +842,9 @@ def chatbot_response(user_input, model, ticker_mapping):
 
         elif intent_data["intent"] == "compare":
             company_names = extract_company_names(user_input)
+            
+            print("The companies names are : " + str(company_names))
+
             tickers = [resolve_ticker(name.upper(), ticker_mapping) + ".TA" for name in company_names]
 
             # Reverse the mapping to get company names from tickers
@@ -927,7 +967,7 @@ def chatbot_response(user_input, model, ticker_mapping):
 
 
         else:
-            return {"text": model.generate_content(user_input).text}
+            return {"text": model.generate_content(prompt_with_history).text}
 
     except Exception as e:
         return {"text": f"Error: {str(e)}"}
