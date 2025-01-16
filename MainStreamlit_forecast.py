@@ -78,35 +78,42 @@ def extract_company_names(user_input):
     user_input = user_input.lower()
     delimiters = [
         "compare", "comparison", "difference between", "versus", "vs",
-        ",", "&", "and", "And", "AND", "compare me the stocks of", "with"
+        ",", "&", "and", "And", "AND", "compare me the stocks of"
     ]
-
     for delimiter in delimiters:
         user_input = user_input.replace(delimiter, ",")
 
     companies = user_input.split(",")
     companies = [company.strip() for company in companies if company.strip()]
-    
+    words_list = []
+    for company in companies:
+        words_list += company.split()
+
     # Load ticker mapping
     ticker_mapping = load_ticker_mapping()
 
     # Match substrings to valid company names
     valid_companies = []
-    for company in companies:
+    for company in words_list:
         for valid_name in ticker_mapping.keys():
             if valid_name in company.upper():
                 valid_companies.append(valid_name)
                 st.session_state.mentioned_tickers.add(valid_name)  # Add to global mentioned tickers
                 break  # Avoid duplicates if the same substring matches multiple names
 
+    print("Extracted companies:", companies)
+    print("Valid companies:", valid_companies)
+    print("Mentioned tickers:", st.session_state.mentioned_tickers)
+    print("companies : " + str(companies))
 
     compare_set = set(valid_companies) | set(st.session_state.mentioned_tickers)
     if len(compare_set) < 2:
         raise ValueError("At least two valid companies are required for comparison.")
-    if "them" or "it" or "previously stocks" in companies:
+    if "them" or "it" or "previously stocks" or "previous stocks" in words_list:
         return st.session_state.mentioned_tickers
     else:
         return valid_companies
+    
 
 def detect_intent(user_input):
     """
@@ -891,6 +898,7 @@ def chatbot_response(user_input, model, ticker_mapping):
 
         elif intent_data["intent"] == "graph":
             company_name = extract_company_name(user_input).upper()
+            st.session_state.mentioned_tickers.add(company_name)
             ticker = resolve_ticker(company_name, ticker_mapping) + ".TA"
             best_model_df = pd.read_csv(BEST_MODEL_CSV)
             stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
