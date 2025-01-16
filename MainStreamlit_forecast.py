@@ -13,6 +13,10 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
+import warnings
+import time
+
+warnings.filterwarnings("ignore")
 
 # Global Configuration
 API_KEY = 'AIzaSyCTNncuxKui7XIzrZWt1o_EtLIxiew8qtE'
@@ -95,10 +99,6 @@ def extract_company_names(user_input):
                 st.session_state.mentioned_tickers.add(valid_name)  # Add to global mentioned tickers
                 break  # Avoid duplicates if the same substring matches multiple names
 
-    print("Extracted companies:", companies)
-    print("Valid companies:", valid_companies)
-    print("Mentioned tickers:", st.session_state.mentioned_tickers)
-    print("companies : " + str(companies))
 
     compare_set = set(valid_companies) | set(st.session_state.mentioned_tickers)
     if len(compare_set) < 2:
@@ -367,7 +367,7 @@ def generate_graph_with_forecast(stock, company_name, model):
         width=1000
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    return fig, forecasted
 
 
 
@@ -786,7 +786,7 @@ def chatbot_response(user_input, model, ticker_mapping):
 
             # Generate Forecasted Values Graph and Collect Summary
             forecasted_values_summary = []
-            fig_forecasted, ax_forecasted = plt.subplots(figsize=(12, 8))
+            fig_forecasted=go.Figure()
             for ticker in sector_data_actual["Ticker"].unique():
                 try:
                     # Determine the best model for the company
@@ -806,8 +806,14 @@ def chatbot_response(user_input, model, ticker_mapping):
 
                     # Plot forecasted values
                     company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
-                    ax_forecasted.plot(pd.to_datetime(forecasted["Date"]), forecasted["Forecasted"], label=company_name)
-
+                    fig_forecasted.add_trace(
+                        go.Scatter(
+                            x=pd.to_datetime(forecasted["Date"]),
+                            y=forecasted["Forecasted"],
+                            mode='lines',
+                            name=company_name
+                        )
+                    )
                     # Collect forecasted values summary
                     forecasted_summary = {
                         "Company Name": company_name,
@@ -818,27 +824,37 @@ def chatbot_response(user_input, model, ticker_mapping):
                     }
                     forecasted_values_summary.append(forecasted_summary)
 
+                    fig_forecasted.update_layout(
+                    title=f"Forecasted Values for {sector_name} Sector",
+                    xaxis_title="Date",
+                    yaxis_title="Forecasted Value",
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                    height=600,
+                    width=1000
+                    )
+                    fig_forecasted.update_xaxes(tickformat='%b %d, %Y', tickangle=45)
+
                 except Exception as e:
                     st.error(f"Could not process forecasted values for {ticker}: {e}")
 
-            ax_forecasted.set_title(f"Forecasted Values for {sector_name} Sector")
-            ax_forecasted.set_xlabel("Date")
-            ax_forecasted.set_ylabel("Forecasted Value")
-            ax_forecasted.legend()
+            # ax_forecasted.set_title(f"Forecasted Values for {sector_name} Sector")
+            # ax_forecasted.set_xlabel("Date")
+            # ax_forecasted.set_ylabel("Forecasted Value")
+            # ax_forecasted.legend()
 
-            # Format x-axis for better readability
-            dates_forecasted = pd.date_range(start=forecast_start_date, periods=len(forecasted), freq="D")
-            tick_positions_forecasted = dates_forecasted[::5]
-            ax_forecasted.set_xticks(tick_positions_forecasted)
-            ax_forecasted.set_xticklabels(tick_positions_forecasted.strftime('%b %d, %Y'))
-            plt.xticks(rotation=45)
+            # # Format x-axis for better readability
+            # dates_forecasted = pd.date_range(start=forecast_start_date, periods=len(forecasted), freq="D")
+            # tick_positions_forecasted = dates_forecasted[::5]
+            # ax_forecasted.set_xticks(tick_positions_forecasted)
+            # ax_forecasted.set_xticklabels(tick_positions_forecasted.strftime('%b %d, %Y'))
+            # plt.xticks(rotation=45)
 
-            buffer_forecasted = BytesIO()
-            plt.savefig(buffer_forecasted, format="png")
-            buffer_forecasted.seek(0)
-            plt.close(fig_forecasted)
+            # buffer_forecasted = BytesIO()
+            # plt.savefig(buffer_forecasted, format="png")
+            # buffer_forecasted.seek(0)
+            # plt.close(fig_forecasted)
 
-            image_html_forecasted, image_base64_forecasted = display_graph(buffer_forecasted)
+            # image_html_forecasted, image_base64_forecasted = display_graph(buffer_forecasted)
 
             # Format sector-wide summary for text generation
             formatted_sector_input = (
@@ -869,13 +885,12 @@ def chatbot_response(user_input, model, ticker_mapping):
             )
 
             # Generate textual analysis
-            generated_sector_text = model.generate_content(formatted_sector_input).tex
+            generated_sector_text = model.generate_content(formatted_sector_input).text
 
             return {"text": generated_sector_text, "graphs": [fig_actual, fig_predicted, fig_forecasted] if fig_actual and fig_predicted else []}
 
         elif intent_data["intent"] == "graph":
             company_name = extract_company_name(user_input).upper()
-            print(company_name)
             ticker = resolve_ticker(company_name, ticker_mapping) + ".TA"
             best_model_df = pd.read_csv(BEST_MODEL_CSV)
             stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
@@ -883,36 +898,38 @@ def chatbot_response(user_input, model, ticker_mapping):
             start_date, end_date = datetime(2024, 1, 1), datetime.today()
             data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
 
-            # Generate the graph
-            fig = go.Figure()
-            fig.add_trace(
-                go.Scatter(
-                    x=data["Date"],
-                    y=data["Actual"],
-                    mode='lines',
-                    name="Actual",
-                    line=dict(dash='solid')
-                )
-            )
-            fig.add_trace(
-                go.Scatter(
-                    x=data["Date"],
-                    y=data["Predicted"],
-                    mode='lines',
-                    name="Predicted",
-                    line=dict(dash='dash')
-                )
-            )
+            fig, forecasted = generate_graph_with_forecast(ticker, company_name, stocks_model)
 
-            fig.update_layout(
-                title=f"Actual and Predicted Values for {company_name} ({stocks_model})",
-                xaxis_title="Date",
-                yaxis_title="Value",
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                height=600,
-                width=1000
-            )
-            fig.update_xaxes(tickformat='%Y-%m', tickangle=45)
+            # # Generate the graph
+            # fig = go.Figure()
+            # fig.add_trace(
+            #     go.Scatter(
+            #         x=data["Date"],
+            #         y=data["Actual"],
+            #         mode='lines',
+            #         name="Actual",
+            #         line=dict(dash='solid')
+            #     )
+            # )
+            # fig.add_trace(
+            #     go.Scatter(
+            #         x=data["Date"],
+            #         y=data["Predicted"],
+            #         mode='lines',
+            #         name="Predicted",
+            #         line=dict(dash='dash')
+            #     )
+            # )
+
+            # fig.update_layout(
+            #     title=f"Actual and Predicted Values for {company_name} ({stocks_model})",
+            #     xaxis_title="Date",
+            #     yaxis_title="Value",
+            #     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            #     height=600,
+            #     width=1000
+            # )
+            # fig.update_xaxes(tickformat='%Y-%m', tickangle=45)
 
 
             # Return graph with text
@@ -971,9 +988,9 @@ def chatbot_response(user_input, model, ticker_mapping):
         elif intent_data["intent"] == "compare":
             company_names = extract_company_names(user_input)
             
-            print("The companies names are : " + str(company_names))
 
             tickers = [resolve_ticker(name.upper(), ticker_mapping) + ".TA" for name in company_names]
+            print(tickers)
 
             # Reverse the mapping to get company names from tickers
             ticker_to_company_name = {v: k for k, v in ticker_mapping.items()}
@@ -1008,6 +1025,7 @@ def chatbot_response(user_input, model, ticker_mapping):
                         # Retrieve the last predicted value
                         last_predicted_value = actual_predicted.loc[actual_predicted["Date"] == last_predicted_date, "Predicted"].values[0]
                         forecasted = extract_forecasted_values(ticker, last_predicted_date, actual_predicted)
+                        
 
                         # Align forecasted dates
                         forecasted["Date"] = pd.date_range(
@@ -1015,7 +1033,6 @@ def chatbot_response(user_input, model, ticker_mapping):
                             periods=len(forecasted),
                             freq="D"
                         )
-
                         # Combine actual, predicted, and forecasted data
                         combined_data = pd.concat(
                             [
@@ -1054,34 +1071,46 @@ def chatbot_response(user_input, model, ticker_mapping):
                             }
                         }
                         comparison_summary.append(company_summary)
-
-                        # Add to comparison graph
-                        fig_comparison.add_trace(
-                            go.Scatter(
-                                x=data["Date"],
-                                y=data["Actual"],
-                                mode='lines',
-                                name=f"{company_name} Actual ({stocks_model})",
-                                line=dict(dash='solid')
-                            )
-                        )
-                        fig_comparison.add_trace(
-                            go.Scatter(
-                                x=data["Date"],
-                                y=data["Predicted"],
-                                mode='lines',
-                                name=f"{company_name} Predicted ({stocks_model})",
-                                line=dict(dash='dash')
-                            )
-                        )
                 except Exception as e:
                     st.error(f"Error processing {ticker}: {e}")
+                
 
-            if not data_frames:
+            for ticker, stocks_model, data in combined_data_frames:
+                company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
+                # Add to comparison graph
+                fig_comparison.add_trace(
+                    go.Scatter(
+                        x=data["Date"],
+                        y=data["Actual"],
+                        mode='lines',
+                        name=f"{company_name} Actual ({stocks_model})",
+                        line=dict(dash='solid')
+                    )
+                )
+                fig_comparison.add_trace(
+                    go.Scatter(
+                        x=data["Date"],
+                        y=data["Predicted"],
+                        mode='lines',
+                        name=f"{company_name} Predicted ({stocks_model})",
+                        line=dict(dash='dash')
+                    )
+                )
+                fig_comparison.add_trace(
+                    go.Scatter(
+                        x=data["Date"],
+                        y=data["Forecasted"],
+                        mode='lines',
+                        name=f"{company_name} Forecasted ({stocks_model})",
+                        line=dict(dash='dash')
+                    )
+                )
+
+            if not combined_data_frames:
                 return {"text": "No data available for the selected companies."}
 
             fig_comparison.update_layout(
-                title="Stock Price Comparison (Actual vs Predicted)",
+                title="Stock Price Comparison",
                 xaxis_title="Date",
                 yaxis_title="Price",
                 legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
@@ -1090,36 +1119,6 @@ def chatbot_response(user_input, model, ticker_mapping):
             )
             fig_comparison.update_xaxes(tickformat='%Y-%m', tickangle=45)
 
-            # Graph 2: Actual vs Forecasted
-            fig2, ax2 = plt.subplots(figsize=(12, 8))
-            for ticker, stocks_model, data in data_frames:
-                company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
-                ax2.plot(
-                    pd.to_datetime(data["Date"]),
-                    data["Actual"],
-                    label=f"{company_name} Actual ({stocks_model})",
-                    linestyle="-"
-                )
-                if "Forecasted" in data:
-                    ax2.plot(
-                        pd.to_datetime(data["Date"]),
-                        data["Forecasted"],
-                        label=f"{company_name} Forecasted ({stocks_model})",
-                        linestyle=":"
-                    )
-
-            ax2.set_title("Stock Price Comparison (Actual vs Forecasted)")
-            ax2.set_xlabel("Date")
-            ax2.set_ylabel("Price")
-            ax2.legend()
-
-            buffer2 = BytesIO()
-            plt.savefig(buffer2, format="png")
-            buffer2.seek(0)
-            plt.close(fig2)
-
-            # Generate HTML for the graph
-            image_html2, image_base64_2 = display_graph(buffer2)
 
             # Format comparison summary for the generative model
             formatted_comparison_input = (
@@ -1153,320 +1152,11 @@ def chatbot_response(user_input, model, ticker_mapping):
 
         else:
             return {"text": model.generate_content(user_input).text}
-
     except Exception as e:
-        return {"text": f"Error: {str(e)}"}
+            return {"text": f"Error: {str(e)}"}
 
-    try:
-        intent_data = detect_intent(user_input)
-        if intent_data["intent"] == "sector_values":
-            sector_name = intent_data["sector"]
-            start_date, end_date = datetime(2024, 1, 1), datetime.today()
-            sector_data_actual = get_actual_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
-            sector_data_actual["Date"] = pd.to_datetime(sector_data_actual["Date"], dayfirst=True)
 
-            # Reverse the mapping to get company names from tickers
-            ticker_to_company_name = {v: k for k, v in ticker_mapping.items()}
-
-            # Generate Actual Values Graph and Collect Summary
-            actual_values_summary = []
-            fig_actual = None
-            if sector_data_actual is not None and not sector_data_actual.empty:
-                fig_actual = go.Figure()
-                for ticker, data in sector_data_actual.groupby("Ticker"):
-                    company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
-                    fig_actual.add_trace(
-                        go.Scatter(
-                            x=pd.to_datetime(data["Date"]),
-                            y=data["Actual"],
-                            mode='lines',
-                            name=company_name
-                        )
-                    )
-
-                    # Collect actual values summary
-                    actual_summary = {
-                        "Company Name": company_name,
-                        "Min": data["Actual"].min(),
-                        "Max": data["Actual"].max(),
-                        "Mean": data["Actual"].mean(),
-                        "Trend": "upward" if data["Actual"].iloc[-1] > data["Actual"].iloc[0] else "downward"
-                    }
-                    actual_values_summary.append(actual_summary)
-
-                fig_actual.update_layout(
-                    title=f"Actual Values for {sector_name} Sector",
-                    xaxis_title="Date",
-                    yaxis_title="Actual Value",
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                    height=600,
-                    width=1000
-                )
-                fig_actual.update_xaxes(tickformat='%b %d, %Y', tickangle=45)
-
-            # Generate Predicted Values Graph and Collect Summary
-            sector_data_predicted = get_predicted_values_by_sector(sector_name, start_date=start_date, end_date=end_date)
-            sector_data_predicted["Date"] = pd.to_datetime(sector_data_predicted["Date"], dayfirst=True)
-            predicted_values_summary = []
-            fig_predicted = None
-            if sector_data_predicted is not None and not sector_data_predicted.empty:
-                fig_predicted = go.Figure()
-                for ticker, data in sector_data_predicted.groupby("Ticker"):
-                    company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
-                    fig_predicted.add_trace(
-                        go.Scatter(
-                            x=pd.to_datetime(data["Date"]),
-                            y=data["Predicted"],
-                            mode='lines',
-                            name=company_name
-                        )
-                    )
-
-                    # Collect predicted values summary
-                    predicted_summary = {
-                        "Company Name": company_name,
-                        "Min": data["Predicted"].min(),
-                        "Max": data["Predicted"].max(),
-                        "Mean": data["Predicted"].mean(),
-                        "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
-                    }
-                    predicted_values_summary.append(predicted_summary)
-
-                fig_predicted.update_layout(
-                    title=f"Predicted Values for {sector_name} Sector",
-                    xaxis_title="Date",
-                    yaxis_title="Predicted Value",
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                    height=600,
-                    width=1000
-                )
-                fig_predicted.update_xaxes(tickformat='%b %d, %Y', tickangle=45)
-
-            # Format sector-wide summary for text generation
-            formatted_sector_input = (
-                f"Sector-wide analysis for {sector_name} sector:\n\n"
-                "Actual Values Summary:\n" +
-                "\n".join(
-                    f"- {summary['Company Name']}:\n"
-                    f"  Min: {summary['Min']:.2f}, Max: {summary['Max']:.2f}, "
-                    f"Mean: {summary['Mean']:.2f}, Trend: {summary['Trend']}"
-                    for summary in actual_values_summary
-                ) +
-                "\n\nPredicted Values Summary:\n" +
-                "\n".join(
-                    f"- {summary['Company Name']}:\n"
-                    f"  Min: {summary['Min']:.2f}, Max: {summary['Max']:.2f}, "
-                    f"Mean: {summary['Mean']:.2f}, Trend: {summary['Trend']}"
-                    for summary in predicted_values_summary
-                ) +
-                "\n\nPlease provide an analysis comparing the trends, values, and predictions for these companies, "
-                "highlight which companies seem to be performing better in the sector, and suggest any insights or recommendations."
-            )
-
-            # Generate textual analysis
-            generated_sector_text = model.generate_content(formatted_sector_input).text
-
-            # Return analysis text with charts
-            return {"text": generated_sector_text, "graphs": [fig_actual, fig_predicted] if fig_actual and fig_predicted else []}
-
-        elif intent_data["intent"] == "graph":
-            company_name = extract_company_name(user_input).upper()
-            ticker = resolve_ticker(company_name, ticker_mapping) + ".TA"
-            best_model_df = pd.read_csv(BEST_MODEL_CSV)
-            stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
-            print(company_name)
-
-            start_date, end_date = datetime(2024, 1, 1), datetime.today()
-            data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
-
-            # Generate the graph
-            fig = go.Figure()
-            fig.add_trace(
-                go.Scatter(
-                    x=data["Date"],
-                    y=data["Actual"],
-                    mode='lines',
-                    name="Actual",
-                    line=dict(dash='solid')
-                )
-            )
-            fig.add_trace(
-                go.Scatter(
-                    x=data["Date"],
-                    y=data["Predicted"],
-                    mode='lines',
-                    name="Predicted",
-                    line=dict(dash='dash')
-                )
-            )
-
-            fig.update_layout(
-                title=f"Actual and Predicted Values for {company_name} ({stocks_model})",
-                xaxis_title="Date",
-                yaxis_title="Value",
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                height=600,
-                width=1000
-            )
-            fig.update_xaxes(tickformat='%Y-%m', tickangle=45)
-
-            # Return graph with text
-            summary_data = {
-                "Company Name": company_name,
-                "Date Range": f"{start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}",
-                "Model Used": stocks_model,
-                "Data Points": len(data),
-                "Actual Values Summary": {
-                    "Min": data["Actual"].min(),
-                    "Max": data["Actual"].max(),
-                    "Mean": data["Actual"].mean(),
-                    "Trend": "upward" if data["Actual"].iloc[-1] > data["Actual"].iloc[0] else "downward"
-                },
-                "Predicted Values Summary": {
-                    "Min": data["Predicted"].min(),
-                    "Max": data["Predicted"].max(),
-                    "Mean": data["Predicted"].mean(),
-                    "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
-                }
-            }
-
-            formatted_input = (
-                f"Stock analysis for {company_name}:\n"
-                f"Date range: {summary_data['Date Range']}\n"
-                f"Model used: {summary_data['Model Used']}\n"
-                f"Number of data points: {summary_data['Data Points']}\n\n"
-                f"Actual Values Summary:\n"
-                f"  - Min: {summary_data['Actual Values Summary']['Min']:.2f}\n"
-                f"  - Max: {summary_data['Actual Values Summary']['Max']:.2f}\n"
-                f"  - Mean: {summary_data['Actual Values Summary']['Mean']:.2f}\n"
-                f"  - Trend: {summary_data['Actual Values Summary']['Trend']}\n\n"
-                f"Predicted Values Summary:\n"
-                f"  - Min: {summary_data['Predicted Values Summary']['Min']:.2f}\n"
-                f"  - Max: {summary_data['Predicted Values Summary']['Max']:.2f}\n"
-                f"  - Mean: {summary_data['Predicted Values Summary']['Mean']:.2f}\n"
-                f"  - Trend: {summary_data['Predicted Values Summary']['Trend']}\n\n"
-                "Please provide an analysis discussing the trends, values, and predictions for this company, "
-                "with any observations about the stock's performance based on the provided data."
-            )
-
-            generated_text = model.generate_content(formatted_input).text
-            return {"text": generated_text, "graphs": [fig]}
-
-        elif intent_data["intent"] == "compare":
-            company_names = extract_company_names(user_input)
-            tickers = [resolve_ticker(name.upper(), ticker_mapping) + ".TA" for name in company_names]
-
-            # Reverse the mapping to get company names from tickers
-            ticker_to_company_name = {v: k for k, v in ticker_mapping.items()}
-
-            # Define date range
-            start_date, end_date = datetime(2024, 1, 1), datetime.today()
-
-            # Load the best model mapping
-            best_model_df = pd.read_csv(BEST_MODEL_CSV)
-
-            # Container for data
-            data_frames = []
-
-            # Collect data and metadata for each ticker
-            comparison_summary = []
-            fig_comparison = go.Figure()
-            for ticker in tickers:
-                try:
-                    # Get the best model for the company
-                    stocks_model = best_model_df.loc[best_model_df["Company"] == ticker, "Model"].values[0]
-
-                    # Extract the data
-                    data = extract_data_by_model(ticker, stocks_model, start_date, end_date)
-                    if not data.empty:
-                        # Add to data frames for plotting
-                        data_frames.append((ticker, stocks_model, data))
-
-                        # Prepare summary data
-                        company_name = ticker_to_company_name.get(ticker.replace(".TA", ""), ticker)
-                        company_summary = {
-                            "Company Name": company_name,
-                            "Model Used": stocks_model,
-                            "Actual Values Summary": {
-                                "Min": data["Actual"].min(),
-                                "Max": data["Actual"].max(),
-                                "Mean": data["Actual"].mean(),
-                                "Trend": "upward" if data["Actual"].iloc[-1] > data["Actual"].iloc[0] else "downward"
-                            },
-                            "Predicted Values Summary": {
-                                "Min": data["Predicted"].min(),
-                                "Max": data["Predicted"].max(),
-                                "Mean": data["Predicted"].mean(),
-                                "Trend": "upward" if data["Predicted"].iloc[-1] > data["Predicted"].iloc[0] else "downward"
-                            }
-                        }
-                        comparison_summary.append(company_summary)
-
-                        # Add to comparison graph
-                        fig_comparison.add_trace(
-                            go.Scatter(
-                                x=data["Date"],
-                                y=data["Actual"],
-                                mode='lines',
-                                name=f"{company_name} Actual ({stocks_model})",
-                                line=dict(dash='solid')
-                            )
-                        )
-                        fig_comparison.add_trace(
-                            go.Scatter(
-                                x=data["Date"],
-                                y=data["Predicted"],
-                                mode='lines',
-                                name=f"{company_name} Predicted ({stocks_model})",
-                                line=dict(dash='dash')
-                            )
-                        )
-                except Exception as e:
-                    st.error(f"Error processing {ticker}: {e}")
-
-            if not data_frames:
-                return {"text": "No data available for the selected companies."}
-
-            fig_comparison.update_layout(
-                title="Stock Price Comparison (Actual vs Predicted)",
-                xaxis_title="Date",
-                yaxis_title="Price",
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                height=600,
-                width=1000
-            )
-            fig_comparison.update_xaxes(tickformat='%Y-%m', tickangle=45)
-
-            # Format comparison summary for the generative model
-            formatted_comparison_input = (
-                f"Comparison of multiple stocks:\n\n"
-                + "\n\n".join(
-                    f"Company: {summary['Company Name']}\n"
-                    f"Model Used: {summary['Model Used']}\n"
-                    f"Actual Values Summary:\n"
-                    f"  - Min: {summary['Actual Values Summary']['Min']:.2f}\n"
-                    f"  - Max: {summary['Actual Values Summary']['Max']:.2f}\n"
-                    f"  - Mean: {summary['Actual Values Summary']['Mean']:.2f}\n"
-                    f"  - Trend: {summary['Actual Values Summary']['Trend']}\n"
-                    f"Predicted Values Summary:\n"
-                    f"  - Min: {summary['Predicted Values Summary']['Min']:.2f}\n"
-                    f"  - Max: {summary['Predicted Values Summary']['Max']:.2f}\n"
-                    f"  - Mean: {summary['Predicted Values Summary']['Mean']:.2f}\n"
-                    f"  - Trend: {summary['Predicted Values Summary']['Trend']}"
-                    for summary in comparison_summary
-                )
-                + "\n\nPlease provide an analysis comparing the trends, values, and predictions for these companies, "
-                "highlight which company seems better based on actual values, and include any interesting observations."
-            )
-
-            generated_comparison_text = model.generate_content(formatted_comparison_input).text
-            return {"text": generated_comparison_text, "graphs": [fig_comparison]}
-
-        else:
-            return {"text": model.generate_content(prompt_with_history).text}
-
-    except Exception as e:
-        return {"text": f"Error: {str(e)}"}
+    
 
 
 def customize_plotly_theme(fig):
@@ -1478,15 +1168,39 @@ def customize_plotly_theme(fig):
         font=dict(family="Arial, sans-serif", size=15, color="#333333"),
         colorway=["#001219","#005f73","#0a9396","#94d2bd","#ee9b00","#ca6702","#bb3e03","#9b2226"]
     )
+    fig.update_layout(
+    hoverlabel=dict(
+        font_size=16  # Change hover text font size
+    )
+    )
+
+    # Customize axis tick font size
+    fig.update_layout(
+        xaxis=dict(
+            tickfont=dict(
+                size=14  # X-axis tick font size
+            )
+        ),
+        yaxis=dict(
+            tickfont=dict(
+                size=14  # Y-axis tick font size
+            )
+        )
+    )
     fig.update_xaxes(tickformat='%Y-%m', tickangle=45, showgrid=True, gridcolor="#B3C8CF")
     fig.update_yaxes(showgrid=True, gridcolor="#B3C8CF")
     return fig
 
 from copy import deepcopy
 
+def text_streamer(text, delay=0.03):
+    for word in text.split(" "):
+        yield word + " "
+        time.sleep(delay)
+
 def main():
-    st.set_page_config(page_title="Chatbot", layout="wide")
-    st.title("Chatbot Application")
+    st.set_page_config(page_title="Robo Advisor", layout="wide")
+    st.title("Robo Advisor")
 
     st.sidebar.title("About")
     st.sidebar.info("This is a chatbot app that provides stock insights.")
@@ -1500,13 +1214,13 @@ def main():
     # Display chat history without duplication
     for i, message in enumerate(st.session_state.chat_history):
         with st.chat_message(message["role"]):
-            if "content" in message and message["content"]:
-                st.markdown(message["content"])
 
             if "graphs" in message and message["graphs"]:
                 for j, graph in enumerate(message["graphs"]):
                     # Unique key ensures Streamlit handles elements independently
                     st.plotly_chart(customize_plotly_theme(graph), use_container_width=True, key=f"history_graph_{i}_{j}")
+            if "content" in message and message["content"]:
+                st.markdown(message["content"])
             else:
                 # Handle unexpected cases gracefully
                 st.markdown("An unknown message format was encountered.")
@@ -1520,12 +1234,13 @@ def main():
         response = chatbot_response(prompt, model, ticker_mapping)
 
         with st.chat_message("assistant"):
-            if "text" in response:
-                st.markdown(response["text"])
             if "graphs" in response and response["graphs"]:
                 for j, graph in enumerate(response["graphs"]):
                     # Use unique keys for new graphs
                     st.plotly_chart(customize_plotly_theme(graph), use_container_width=True, key=f"response_graph_{len(st.session_state.chat_history)}_{j}")
+                    time.sleep(1)
+            if "text" in response:
+                st.write_stream(text_streamer(response["text"]))
 
             # Append response to session history
             st.session_state.chat_history.append({
