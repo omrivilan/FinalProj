@@ -22,6 +22,11 @@ BEST_MODEL_CSV = "/workspaces/FinalProj/Metrics/best_model_per_stock.csv"
 SECTORS_DF_PATH = "sectors_df.csv"
 # Initialize API and Streamlit
 
+# Noam's additional imports
+import yfinance as yf
+from GraphDrawer import plot_actual_vs_forecasted
+
+
 def initialize_genai():
     genai.configure(api_key=API_KEY)
     return genai.GenerativeModel(
@@ -932,6 +937,43 @@ def chatbot_response(user_input, model, ticker_mapping):
     except Exception as e:
         return {"text": f"Error: {str(e)}"}
 
+
+# Downloads the actual values of Adj Closing Price for each stock, between the specified dates
+def download_actual_values(tickers, start_date, end_date, output_file):
+    """
+    Downloads actual Adj Close prices from Yahoo Finance for the specified tickers and date range,
+    and saves them to a CSV file.
+    
+    :param tickers: List of stock tickers
+    :param start_date: Start date as a string in 'YYYY-MM-DD'
+    :param end_date: End date as a string in 'YYYY-MM-DD'
+    :param output_file: Path to the output CSV file
+    """
+    all_data = {}
+    
+    for ticker in tickers:
+        data = yf.download(ticker, start=start_date, end=end_date)
+        if 'Adj Close' in data.columns:
+            all_data[ticker] = data['Adj Close']
+    
+    result_df = pd.DataFrame(all_data)
+    result_df.index.name = 'Date'
+    result_df.to_csv(output_file)
+    print(f"Actual values saved to {output_file}")
+
+# Saves the Forecasted values in a CSV file
+def save_forecasted_values(predictions, output_file):
+    """
+    Saves predicted and forecasted values into a CSV file.
+    
+    :param predictions: DataFrame containing 'Date', 'Ticker', 'Predicted', 'Forecasted'
+    :param output_file: Path to the output CSV file
+    """
+    predictions.to_csv(output_file, index=False)
+    print(f"Predicted and forecasted values saved to {output_file}")
+
+
+
 # Main Streamlit App
 def main():
     st.set_page_config(page_title="Chatbot", layout="wide")
@@ -942,6 +984,26 @@ def main():
 
     model = initialize_genai()
     ticker_mapping = load_ticker_mapping()
+
+    ######################################################################
+    #download_actual_values()
+    #save_forecasted_values()
+
+    st.sidebar.subheader("Actual vs. Forecasted Graph")
+    stock_ticker = st.sidebar.text_input("Enter Stock Ticker", value="")
+    actual_file = st.sidebar.text_input("Path to Actual Values CSV", value="path/to/actual_values.csv")
+    forecasted_file = st.sidebar.text_input("Path to Forecasted Values CSV", value="path/to/forecasted_values.csv")
+
+    if st.sidebar.button("Show Graph"):
+        if stock_ticker and actual_file and forecasted_file:
+            try:
+                plot_actual_vs_forecasted(actual_file, forecasted_file)
+                st.sidebar.success(f"Graph displayed for {stock_ticker}.")
+            except Exception as e:
+                st.sidebar.error(f"Error generating graph: {e}")
+        else:
+            st.sidebar.warning("Please provide all required inputs.")
+    ######################################################################
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
