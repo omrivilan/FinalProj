@@ -150,3 +150,31 @@ class GraphDrawer:
 
         except Exception as e:
             st.error(f"Error processing predictions vs actual data: {e}")
+
+# Noam's function
+# Displays a graph that compares the Actual vs. Forecasted values for a specific stock
+def plot_actual_vs_forecasted(actual_file, forecasted_file):
+    """
+    Plots actual vs. forecasted values for stocks.
+
+    :param actual_file: Path to the CSV file containing actual values
+    :param forecasted_file: Path to the CSV file containing forecasted values
+    """
+    actual = pd.read_csv(actual_file, index_col="Date", parse_dates=True)
+    forecasted = pd.read_csv(forecasted_file, parse_dates=["Date"])
+
+    plt.figure(figsize=(12, 8))
+
+    for ticker in actual.columns:
+        if ticker in forecasted['Ticker'].unique():
+            plt.plot(actual.index, actual[ticker], label=f"{ticker} Actual")
+            forecasted_data = forecasted[forecasted['Ticker'] == ticker]
+            plt.plot(forecasted_data['Date'], forecasted_data['Forecasted'], linestyle='--', label=f"{ticker} Forecasted")
+
+    plt.title("Actual vs Forecasted Values")
+    plt.xlabel("Date")
+    plt.ylabel("Price")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
