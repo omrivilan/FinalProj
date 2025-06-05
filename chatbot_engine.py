@@ -288,6 +288,7 @@ class ChatbotEngine:
             comps       = detected.get("companies", None)
             industries  = detected.get("industries", None)
             st.session_state["last_intent"] = intent
+            print(intent)
 
             # ── 0️⃣ Handle “addition” intent ───────────────────────────────────────
             if intent == "addition":
@@ -367,7 +368,6 @@ class ChatbotEngine:
         response = self.llm.invoke(messages)
 
         if hasattr(response, "tool_calls") and response.tool_calls:
-            print(response)
             return self._handle_tool_call(response)
 
         output = {"text": response.content, "intent": "fallback", "raw_input": user_input}
