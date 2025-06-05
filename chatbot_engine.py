@@ -120,7 +120,7 @@ class ChatbotEngine:
         # Register tools
 
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash-lite",  # or "gemini-2.0-flash-lite"
+            model="gemini-1.5-flash",  # or "gemini-2.0-flash-lite"
             stream=True,
             temperature=0.3,
             google_api_key=API_KEY,
