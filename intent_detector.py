@@ -163,23 +163,23 @@ class IntentDetector:
             st.session_state.last_industries = unique_i
             return {"intent": "addition", "industries": unique_i}
 
-        # 7️⃣ Decide intent purely by count of substring‐matches (fresh logic)
-        comps = list(dict.fromkeys(matched_companies))
-        inds  = list(dict.fromkeys(matched_industries))
+        # # 7️⃣ Decide intent purely by count of substring‐matches (fresh logic)
+        # comps = list(dict.fromkeys(matched_companies))
+        # inds  = list(dict.fromkeys(matched_industries))
 
-        if len(comps) >= 2:
-            st.session_state.last_companies = comps
-            return {"intent": "compare", "companies": comps}
-        if len(comps) == 1:
-            st.session_state.last_company = comps[0]
-            st.session_state.last_companies = [comps[0]] 
-            return {"intent": "graph", "company": comps[0]}
-        if len(inds) >= 2:
-            st.session_state.last_industries = inds
-            return {"intent": "sector_comparison", "industries": inds}
-        if len(inds) == 1:
-            st.session_state.last_industry = inds[0]
-            return {"intent": "industry_values", "industry": inds[0]}
+        # if len(comps) >= 2:
+        #     st.session_state.last_companies = comps
+        #     return {"intent": "compare", "companies": comps}
+        # if len(comps) == 1:
+        #     st.session_state.last_company = comps[0]
+        #     st.session_state.last_companies = [comps[0]] 
+        #     return {"intent": "graph", "company": comps[0]}
+        # if len(inds) >= 2:
+        #     st.session_state.last_industries = inds
+        #     return {"intent": "sector_comparison", "industries": inds}
+        # if len(inds) == 1:
+        #     st.session_state.last_industry = inds[0]
+        #     return {"intent": "industry_values", "industry": inds[0]}
 
         # 8️⃣ Fallback to fuzzy/keyword logic
         if self.fuzzy_contains_keyword(normalized, self.intent_keywords["compare"]):
