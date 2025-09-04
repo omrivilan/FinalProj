@@ -1,0 +1,511 @@
+﻿Ticker,Sector,Industry,Company Name,HebrewIndustryName
+ABRA,Technology,Software Application,ABRA,אפליקציות תוכנה
+ACCL,Technology,Electronics & Computer Distribution,ACCEL,אלקטרוניקה
+ACKR,Basic Materials,Building Materials,ACKERSTEIN GROUP,חומרי בנייה
+ACRO,Real Estate Diversified,Real Estate Diversified Development,ACRO GROUP,"פיתוח נדל""ן מגוון"
+ADGR,Real Estate Diversified,Real Estate Diversified Services,ADGAR INVESTMENTS,"שירותי נדל""ן מגוונים"
+ARDM,Consumer Defensive,Education & Training Services,AERODROME GROUP,שירותי הכשרה
+AFHL,Technology,Electronic Components,AFCON HOLDINGS,רכיבים אלקטרוניים
+AFPR,Real Estate Diversified,Real Estate Diversified Services,AFI PROPERTIES,"שירותי נדל""ן מגוונים"
+AFRE,Real Estate Diversified,Real Estate Diversified Development,AFRICA ISRAEL RESIDENCES,"פיתוח נדל""ן מגוון"
+AICS-M,,,AI SYSTEMS,תרגום חסר
+ARPT,Real Estate Diversified,Real Estate Diversified Services,AIRPORT CITY,"שירותי נדל""ן מגוונים"
+ARTS,Industrials,Pollution & Treatment Controls,AIRTOUCH,בקרת זיהום וטיפול
+ALAR,Technology,Software Infrastructure,ALARUM,תשתיות תוכנה
+ALBA,Consumer Defensive,Household & Personal Products,ALBAAD,מוצרי בית ואישיים
+ALMD,Healthcare,Medical Devices,ALLMED SOLUTION,מכשור רפואי
+ALLT,Technology,Software Infrastructure,ALLOT,תשתיות תוכנה
+ALMY,Industrials,Engineering & Construction,ALMA YESODOT,הנדסה ובנייה
+AMDA,Healthcare,Health Information Services,ALMEDA PARTICIPATION UNIT,שירותי מידע רפואיים
+ALMA,Consumer Cyclical,Residential Construction,ALMOGIM,בנייה למגורים
+ALHE,Real Estate Diversified,Real Estate Diversified Services,ALONY HETZ,"שירותי נדל""ן מגוונים"
+ALRPR,Real Estate Diversified,Real Estate Diversified,ALROV PROPERTIES,"נדל""ן מגוון"
+ALUMA,Financial Services,Asset Management,ALUMA INFRASTRUCTURES,ניהול נכסים
+AMAN,Industrials,Conglomerates,AMANET,קונגלומרטים
+AMD,Industrials,Pollution & Treatment Controls,AMIAD,בקרת זיהום וטיפול
+AMRK,Basic Materials,Agricultural Inputs,AMIR MARKETING,תשומות חקלאיות
+AMOT,Real Estate Diversified,Real Estate Diversified Services,AMOT,"שירותי נדל""ן מגוונים"
+AMRM,Real Estate Diversified,Real Estate Diversified Services,AMRM,"שירותי נדל""ן מגוונים"
+ANGL,Consumer Defensive,Confectioners,ANGEL SOLOMON,יצרני ממתקים
+APLP,Technology,Solar,APOLLO POWER,אנרגיה סולארית
+AQUA,Industrials,Specialty Industrial Machinery,AQUARIUS ENGINES,מכונות תעשייה ייחודיות
+ARD,Technology,Scientific & Technical Instruments,ARAD,מכשור מדעי וטכני
+ARAD,,,ARAD INVESTMENT,טכנולוגיה ואופטיקה
+ARAN,Industrials,Conglomerates,ARAN,קונגלומרטים
+ARBE,Technology,Software Infrastructure,ARBE ROBOTICS,תשתיות תוכנה
+ARGO,Real Estate Diversified,Real Estate Diversified Services,ARGO PROPERTIES,"שירותי נדל""ן מגוונים"
+ARIN,Real Estate Diversified,Real Estate Diversified Services,ARI RAEL ESTATE,"שירותי נדל""ן מגוונים"
+ARYT,Industrials,Aerospace & Defense,ARYT,תעופה וביטחון
+ARF,Energy,Oil & Gas Refining & Marketing,ASHDOD REFINERY,זיקוק ושיווק נפט
+ASHO,Industrials,Aerospace & Defense,ASHOT,תעופה וביטחון
+ASHG,Real Estate Diversified,Real Estate Diversified Development,ASHTROM GROUP,"פיתוח נדל""ן מגוון"
+ASGR,Real Estate Diversified,Real Estate Diversified Services,ASPEN GROUP,"שירותי נדל""ן מגוונים"
+AUDC,Technology,Communication Equipment,AUDIOCODES,ציוד תקשורת
+AUGN,Industrials,Specialty Industrial Machinery,AUGWIND,מכונות תעשייה ייחודיות
+AURA,Real Estate Diversified,Real Estate Diversified Development,AURA,"פיתוח נדל""ן מגוון"
+AUSA-M,,,AURA SMART AIR,קלינטק
+AUIS,Real Estate Diversified,Real Estate Diversified Services,AUSTRALIA ISR,"שירותי נדל""ן מגוונים"
+AMX,Consumer Cyclical,Auto & Truck Dealerships,AUTOMAX,סוכנויות רכב
+AVER,Consumer Cyclical,"Furnishings, Fixtures & Appliances",AVERBUCH,רהיטים ומכשירי חשמל
+AVGD,Real Estate Diversified,Real Estate Diversified Development,AVGAD,"פיתוח נדל""ן מגוון"
+AVGL,Consumer Cyclical,Textile Manufacturing,AVGOL,ייצור טקסטיל
+AVIA,Consumer Cyclical,Travel Services,AVIATION LINKS,שירותי נסיעות
+AVIV,Industrials,Engineering & Construction,AVIV,הנדסה ובנייה
+AVRT,Industrials,Metal Fabrication,AVROT,ייצור מתכת
+AILN,Technology,Software Infrastructure,AXILION,תשתיות תוכנה
+AYAL,Financial Services,Insurance,AYALON HOLD.,ביטוח
+AZRM,Consumer Cyclical,Residential Construction,AZORIM,בנייה למגורים
+AZRG,Real Estate Diversified,Real Estate Diversified Services,AZRIELI GROUP,"שירותי נדל""ן מגוונים"
+BCOM,Communication Services,Telecom Services,B COMMUNICATIONS,שירותי טלקום
+BKFR,Healthcare,Medical Care Facilities,BAIT BAKFAR,מרכזים רפואיים
+BVGG,Consumer Cyclical,Residential Construction,BAIT VEGAG,בנייה למגורים
+BRAN,Industrials,Engineering & Construction,BARAN,הנדסה ובנייה
+BRKT,Financial Services,Credit Services,BAREKET,שירותי אשראי
+BVC,Healthcare,Medical Instruments & Supplies,BATM,ציוד רפואי
+ORL,Energy,Oil & Gas Refining & Marketing,BAZAN,זיקוק ושיווק נפט
+BHNY,Consumer Defensive,Packaged Foods,BEEIO HONEY,מזון ארוז
+BSEN,Industrials,Aerospace & Defense,BET SHEMESH,תעופה וביטחון
+BEZQ,Communication Services,Telecom Services,BEZEQ,שירותי טלקום
+BIG,Real Estate Diversified,Real Estate Diversified Services,BIG,"שירותי נדל""ן מגוונים"
+BIGT,Financial Services,Asset Management,BIG-TECH 50 PARTICIPATION UNIT,ניהול נכסים
+BKRY,Consumer Defensive,Food Distribution,BIKUREY HASHDE,הפצת מזון
+BIOV,Healthcare,Medical Devices,BIO VIEW,מכשור רפואי
+BOLT,Healthcare,Biotechnology,BIOLIGHT,ביוטכנולוגיה
+BLRX,Healthcare,Biotechnology,BIOLINE RX,ביוטכנולוגיה
+BIMT,Financial Services,Asset Management,BIOMEAT FOOD PARTICIPATION UNIT,ניהול נכסים
+BIRM,Industrials,Building Products & Equipment,BIRMAN,מוצרי ובציוד בנייה
+BLRN,Technology,Computer Hardware,BLADE RANGER,חומרת מחשבים
+BLITZ-M,,,BLITZ-MOTORS,אלקטרוניקה ואופטיקה
+BLSR,Real Estate Diversified,Real Estate Diversified Services,BLUE SQUARE Real Estate Diversified,"שירותי נדל""ן מגוונים"
+BOTI,Real Estate Diversified,Real Estate Diversified Services,BONEI TICHON,"שירותי נדל""ן מגוונים"
+BONS,Healthcare,Biotechnology,BONUS BIOGROUP,ביוטכנולוגיה
+BCNV-M,Real Estate Diversified,Real Estate Diversified Services,BRACK CAPITAL PROPERTIES,"שירותי נדל""ן מגוונים"
+BWAY,Healthcare,Medical Devices,BRAINSWAY,מכשור רפואי
+BRAM,Consumer Cyclical,Packaging & Containers,BRAM INDUSTRIES,אריזות ומיכלים
+BRND,Basic Materials,Steel,BRAND,פלדה
+BRIL,Consumer Cyclical,Apparel Retail,BRILL,קמעונאות הלבשה
+BRMG,Technology,Electronics & Computer Distribution,BRIMAG,אלקטרוניקה
+BBLS,Financial Services,Credit Services,BUBBLES,שירותי אשראי
+BLGO,Real Estate Diversified,Real Estate Diversified Services,BULIGO,"שירותי נדל""ן מגוונים"
+BULL-M,,,BULL TRADING,אשראי חוץ בנקאי
+CISY,Technology,Scientific & Technical Instruments,C I SYSTEMS,מכשור מדעי וטכני
+CLAB,Technology,Computer Hardware,C-LAB,חומרת מחשבים
+CAMT,Technology,Semiconductor Equipment & Materials,CAMTEK,ציוד לשבבים
+CANF,Healthcare,Biotechnology,CAN FITE BIOFARMA,ביוטכנולוגיה
+CNGL,Industrials,Engineering & Construction,CANADA GLOBAL,הנדסה ובנייה
+CNTC,Healthcare,Drug Manufacturers,CANNABOTECH,יצרני תרופות
+CNZN,,,CANZON,השקעות ואחזקות
+CPTP,Financial Services,Asset Management,CAPITAL POINT,ניהול נכסים
+CRSM,Consumer Cyclical,Auto & Truck Dealerships,CARASSO MOTORS,סוכנויות רכב
+CRSR,Real Estate Diversified,Real Estate Diversified Development,CARASSO Real Estate Diversified,"פיתוח נדל""ן מגוון"
+CRML,Consumer Defensive,Beverages,CARMEL CORP,משקאות
+CRMT,Consumer Defensive,Confectioners,CARMIT,יצרני ממתקים
+CAST,Consumer Cyclical,Apparel Retail,CASTRO,קמעונאות הלבשה
+CEL,Communication Services,Telecom Services,CELLCOM,שירותי טלקום
+CILO,Real Estate Diversified,Real Estate Diversified Development,CIELO-BLU,"פיתוח נדל""ן מגוון"
+CION,Financial Services,Asset Management,CION,ניהול נכסים
+CPIA,Technology,Software Infrastructure,CIPIA VISION,תשתיות תוכנה
+CTPL1,Real Estate Diversified,Real Estate Diversified Services,CITRUS PLANT1,"שירותי נדל""ן מגוונים"
+CTPL5,Real Estate Diversified,Real Estate Diversified Services,CITRUS PLANT5,"שירותי נדל""ן מגוונים"
+CBI,Healthcare,Biotechnology,CLAL BIOTECH,ביוטכנולוגיה
+CLIS,Financial Services,Life Insurance,CLAL INSURANCE,ביטוח חיים
+CFX,Consumer Cyclical,Restaurants,COFIX GROUP,מסעדות
+CDEV,Industrials,Conglomerates,COHEN DEVELOPMENT,קונגלומרטים
+CGEN,Healthcare,Biotechnology,COMPUGEN,ביוטכנולוגיה
+CMDR,Technology,Information Technology Services,COMPUTER DIRECT,שירותי טכנולוגיית מידע
+CNTL-M,Technology,Software Infrastructure,CONTINUAL,תשתיות תוכנה
+CMCT,Real Estate Diversified,Real Estate Investments,CREATIVE MEDIA,"השקעות בנדל""ן"
+DANH,Consumer Cyclical,Lodging,DAN HOTELS,אירוח
+DANE,Healthcare,Medical Care Facilities,DANEL,מרכזים רפואיים
+DNYA,Industrials,Engineering & Construction,DANYA CEBUS,הנדסה ובנייה
+DLEA,Consumer Cyclical,Auto & Truck Dealerships,DELEK AUTOMOTIV,סוכנויות רכב
+DLEKG,Energy,Oil & Gas E&P,DELEK GROUP,חיפוש והפקת נפט וגז
+DLTI,Consumer Cyclical,Apparel Manufacturing,DELTA BRANDS,ייצור הלבשה
+DELG,Consumer Cyclical,Apparel Manufacturing,DELTA GALIL,ייצור הלבשה
+DIMRI,Consumer Cyclical,Residential Construction,DIMRI,בנייה למגורים
+DIPL,Consumer Defensive,Food Distribution,DIPLOMAT HOLDINGS,הפצת מזון
+DIFI,Financial Services,Credit Services,DIRECT FINANCE,שירותי אשראי
+DSCT,Financial Services,Banks,DISCOUNT,בנקים
+DISI,Communication Services,Telecom Services,DISCOUNT INVESTMENTS,שירותי טלקום
+DNA,Healthcare,Biotechnology,DNA GROUP,ביוטכנולוגיה
+DRAL,Consumer Cyclical,Specialty Retail,DOR ALON,קמעונאות ייחודית
+DORL,Utilities,Renewable Energy,DORAL ENERGY,אנרגיה מתחדשת
+DRSH,Real Estate Diversified,Real Estate Diversified Services,DORSEL HOLDINGS,"שירותי נדל""ן מגוונים"
+DUNI,Consumer Cyclical,Residential Construction,DUNIEC,בנייה למגורים
+ECNR,Utilities,Renewable Energy,ECONERGY,אנרגיה מתחדשת
+ECPA-M,,,ECOPPIA,מעטפת
+EFCP,Real Estate Diversified,Real Estate Diversified Development,EFFI CAPITAL,"פיתוח נדל""ן מגוון"
+ELAL,Industrials,Airlines,EL AL,תעופה
+EMITF-M,Healthcare,Medical Devices,ELBIT IMAGING,מכשור רפואי
+EMTC-M,Healthcare,Medical Devices,ELBIT MEDITEC,מכשור רפואי
+ESLT,Industrials,Aerospace & Defense,ELBIT SYSTEMS,תעופה וביטחון
+ELCO,Industrials,Conglomerates,ELCO,קונגלומרטים
+ELDAV-M,Financial Services,Asset Management,ELDAV,ניהול נכסים
+ELTR,Industrials,Engineering & Construction,ELECTRA,הנדסה ובנייה
+ECP,Technology,Consumer Electronics,ELECTRA CONSUMER PRODUCTS,אלקטרוניקה לצרכן
+ELCP,Utilities,Regulated Gas,ELECTRA POWER,גז
+ELCRE,Real Estate Diversified,Real Estate Diversified Services,ELECTRA Real Estate Diversified,"שירותי נדל""ן מגוונים"
+ELWS,Industrials,Engineering & Construction,ELECTREON,הנדסה ובנייה
+ELLO,Utilities,Renewable Energy,ELLOMAY,אנרגיה מתחדשת
+ELMR,Industrials,Engineering & Construction,ELMOR,הנדסה ובנייה
+ELRN,Financial Services,Asset Management,ELRON,ניהול נכסים
+ELSPC,Industrials,Electrical Equipment & Parts,ELSPEC,ציוד אלקטרוני
+EMCO,Technology,Information Technology Services,EMET,שירותי טכנולוגיית מידע
+EMDV,Financial Services,Asset Management,EMILIA DEVELOPMENT,ניהול נכסים
+ENDY,,,ENDYMED,מכשור רפואי
+ENOG,Energy,Oil & Gas E&P,ENERGEAN,חיפוש והפקת נפט וגז
+ENRG,Utilities,Renewable Energy,ENERGIX,אנרגיה מתחדשת
+ENLT,Utilities,Renewable Energy,ENLIGHT ENERGY,אנרגיה מתחדשת
+ENLV,Healthcare,Biotechnology,ENLIVEX,ביוטכנולוגיה
+EPIT,Healthcare,Medical Devices,EPITOMEE MEDICAL,מכשור רפואי
+EQTL,Energy,Oil & Gas E&P,EQUITAL,חיפוש והפקת נפט וגז
+EFNC-M,Healthcare,Medical Devices,ERECH FINANCE,מכשור רפואי
+BCUR,Healthcare,Medical Devices,ERIKA B-CURE,מכשור רפואי
+ETGA,Industrials,Integrated Freight & Logistics,ETGA GROUP,שילוח ולוגיסטיקה
+EVGN,Healthcare,Biotechnology,EVOGENE,ביוטכנולוגיה
+EXPO,Financial Services,Banks,EXPORT INVESTMENT,בנקים
+FTAL,Consumer Cyclical,Lodging,FATAL HOLDINGS,אירוח
+FEAT,Financial Services,Asset Management,FEAT INVESTMENTS PARTICIPATION UNIT,ניהול נכסים
+FIBI,Financial Services,Banks,FIBI BANK,בנקים
+FIBIH,Financial Services,Banks,FIBI HOLDINGS,בנקים
+FGAS,Energy,Oil & Gas Equipment & Services,FIRE AND GAS DETECTION,ציוד ושירותי נפט וגז
+FLYS,Consumer Defensive,Packaged Foods,FLYING SPARK,מזון ארוז
+FBRT,Industrials,Aerospace & Defense,FMS,תעופה וביטחון
+FRSX,Consumer Cyclical,Auto Parts,FORESIGHT,חלקי רכב
+FORTY,Technology,Information Technology Services,FORMOLA,שירותי טכנולוגיית מידע
+FOX,Consumer Cyclical,Apparel Manufacturing,FOX,ייצור הלבשה
+FRDN,Industrials,Integrated Freight & Logistics,FRIDENSON,שילוח ולוגיסטיקה
+GOSS,Industrials,Security & Protection Services,G 1 SECURE SOLUTIONS,שירותי אבטחה
+GCT,Real Estate Diversified,Real Estate Diversified,G CITY,"נדל""ן מגוון"
+GPGB-M,Utilities,Independent Power Producers,G.P GLOBAL,יצרני חשמל עצמאיים
+GLTC,,,GALILEO TECH,אשראי חוץ בנקאי
+GMLA,Financial Services,Credit Services,GAMLA HAREL,שירותי אשראי
+GSFI,Consumer Defensive,Beverages,GAN SHMUEL,משקאות
+GAGR,Basic Materials,Steel,GAON GROUP,פלדה
+GAON-M,Industrials,Building Products & Equipment,GAON HOLDINGS,מוצרי ובציוד בנייה
+GVYM,Real Estate Diversified,Real Estate Diversified Development,GAV YAM,"פיתוח נדל""ן מגוון"
+GEFR,Real Estate Diversified,Real Estate Diversified Development,GEFFEN RESIDENCE & RENEWAL,"פיתוח נדל""ן מגוון"
+GNCL,Industrials,Electrical Equipment & Parts,GENCELL,ציוד אלקטרוני
+GNRS,Financial Services,Asset Management,GENERATION CAPITAL,ניהול נכסים
+GFC-M,Healthcare,Biotechnology,GFC,ביוטכנולוגיה
+GIBUI,Financial Services,Asset Management,GIBUI HOLDING,ניהול נכסים
+GILT,Technology,Communication Equipment,GILAT,ציוד תקשורת
+GLTL,Communication Services,Telecom Services,GILAT TELECOM,שירותי טלקום
+GNGR,Consumer Cyclical,Textile Manufacturing,GINEGAR,ייצור טקסטיל
+GIVO,Energy,Oil & Gas E&P,GIVOT PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+GIX,Communication Services,Advertising Agencies,GIX,סוכנויות פרסום
+GKL,Industrials,Aerospace & Defense,GLOBAL KNAFAIM,תעופה וביטחון
+GLEN-M,Energy,Oil & Gas E&P,GLOBE PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+GLRS,Consumer Defensive,Tobacco,GLOBRANDS,טבק
+GOTO,,,GO TO,תרגום חסר
+GRIN,Industrials,Building Products & Equipment,GOLAN INDUSTRIES,מוצרי ובציוד בנייה
+GOLD,Industrials,Marine Shipping,GOLD,ספנות
+GOHO,Healthcare,Medical Care Facilities,GOLDEN HOUSE,מרכזים רפואיים
+GOLF,Consumer Cyclical,Specialty Retail,GOLF,קמעונאות ייחודית
+GRAC,,,GRACE BREEDING,ביוטכנולוגיה
+G107,Technology,Software Infrastructure,GROUP 107,תשתיות תוכנה
+GUID,Communication Services,Internet Content & Information,GUIDLINE,תוכן אינטרנטי
+HDST-M,Healthcare,Biotechnology,HADASIT BIO,ביוטכנולוגיה
+HGG,Real Estate Diversified,Real Estate Diversified Services,HAGAG,"שירותי נדל""ן מגוונים"
+HGGE,Real Estate Diversified,Real Estate Diversified Development,HAGAG EUROPE,"פיתוח נדל""ן מגוון"
+HMAM,Consumer Defensive,Farm Products,HAMAMA,מוצרי חקלאות
+MSBI,Consumer Cyclical,Department Stores,HAMASHBIR 365,כלבו
+HAMAT,Industrials,Building Products & Equipment,HAMAT,מוצרי ובציוד בנייה
+HARL,Financial Services,Insurance,HAREL,ביטוח
+HICN,Industrials,Specialty Industrial Machinery,HIGHCON SYSTEMS,מכונות תעשייה ייחודיות
+HLAN,Technology,Information Technology Services,HILAN,שירותי טכנולוגיית מידע
+HIPR,Technology,Computer Hardware,HIPER GLOBAL,חומרת מחשבים
+HRON,Real Estate Diversified,Real Estate Diversified Development,HIRON,"פיתוח נדל""ן מגוון"
+HIVE,Financial Services,Asset Management,HIVE 2040 PARTICIPATION UNIT,ניהול נכסים
+HOD,Basic Materials,Steel,HOD,פלדה
+HDHA,,,HODAYAT HAARETZ,תרגום חסר
+HLMS,Consumer Cyclical,Leisure,HOLMES PLACE,פנאי
+HMGS,Utilities,Renewable Energy,HOMEBIOGAS,אנרגיה מתחדשת
+HUMX,Healthcare,Medical Devices,HUMAN XT,מכשור רפואי
+IARG,,,I ARGENTO PU,השקעות בהייטק
+ICL,Basic Materials,Agricultural Inputs,ICL,תשומות חקלאיות
+ICON,Technology,Electronics & Computer Distribution,ICON GROUP,אלקטרוניקה
+IDNT,Healthcare,Health Information Services,IDENTI,שירותי מידע רפואיים
+IDIN,Financial Services,Insurance,IDI INSURANCE,ביטוח
+IDMO,Technology,Software Application,IDOMOO,אפליקציות תוכנה
+IES,Real Estate Diversified,Real Estate Diversified Services,IES,"שירותי נדל""ן מגוונים"
+INTO,,,IINTOO,תוכנה ואינטרנט
+ILDR,Energy,Oil & Gas E&P,ILD RENEWAL,חיפוש והפקת נפט וגז
+ILX,Healthcare,Medical Devices,ILEX MEDICAL,מכשור רפואי
+ISI,Industrials,Aerospace & Defense,IMAGESAT I.S.I,תעופה וביטחון
+IMCO,Industrials,Aerospace & Defense,IMCO,תעופה וביטחון
+IMED,Healthcare,Health Information Services,IMED PARTICIPATION UNIT,שירותי מידע רפואיים
+INFR-M,,,INFEMIL,מעטפת
+INRM,Basic Materials,Building Materials,INROM CONSTRUCTION INDUSTRIES,חומרי בנייה
+ININ,Technology,Electronic Components,INTER INDUSTRIES,רכיבים אלקטרוניים
+INCR,Healthcare,Drug Manufacturers,INTERCURE,יצרני תרופות
+INTR,Industrials,Conglomerates,INTERGAMA,קונגלומרטים
+IGLD,Communication Services,Telecom Services,INTERNET GOLD,שירותי טלקום
+ISCN,Real Estate Diversified,Real Estate Diversified Development,ISRAEL CANADA,"פיתוח נדל""ן מגוון"
+ILDC,Real Estate Diversified,Real Estate Diversified Services,ISRAEL LAND DEVELOPMENT COMPANY,"שירותי נדל""ן מגוונים"
+ISOP,Energy,Oil & Gas E&P,ISRAEL OPPORTUNITY PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+ISHI,Industrials,Aerospace & Defense,ISRAEL SHIPYARD,תעופה וביטחון
+ISRG,Industrials,Airlines,ISRAIR GROUP,תעופה
+ISRA,Energy,Oil & Gas E&P,ISRAMCO PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+ISRS,Real Estate Diversified,Real Estate Diversified Services,ISRAS,"שירותי נדל""ן מגוונים"
+ISRO,Consumer Cyclical,Lodging,ISROTEL,אירוח
+ISTA,Consumer Cyclical,Travel Services,ISSTA,שירותי נסיעות
+JCFN,Financial Services,Credit Services,JACOB FINANCE,שירותי אשראי
+JBNK,Financial Services,Banks,JERUSALEM,בנקים
+JNGO,Technology,Software Application,JUNGO,אפליקציות תוכנה
+KDST,Healthcare,Biotechnology,KADIMASTEM,ביוטכנולוגיה
+KAFR,Basic Materials,Specialty Chemicals,KAFRIT,כימיקלים מיוחדים
+KMDA,Healthcare,Drug Manufacturers,KAMADA,יצרני תרופות
+KRDI,Real Estate Diversified,Real Estate Diversified Services,KARDEN ISRAEL,"שירותי נדל""ן מגוונים"
+KARE,Real Estate Diversified,Real Estate Diversified Services,KARDEN Real Estate Diversified,"שירותי נדל""ן מגוונים"
+KEN,Utilities,Independent Power Producers,KENON,יצרני חשמל עצמאיים
+KRUR,Consumer Defensive,Packaged Foods,KERUR,מזון ארוז
+KSTN,Real Estate Diversified,Real Estate Investments,KEYSTONE INFRA,"השקעות בנדל""ן"
+KLIL,Basic Materials,Aluminum,KLIL,אלומיניום
+KNFM,Industrials,Airlines,KNAFAIM,תעופה
+LHIS,Industrials,Farm & Heavy Construction Machinery,LACHISH,ציוד חקלאי ובנייה כבדה
+LAHAV,Consumer Cyclical,Specialty Retail,LAHAV,קמעונאות ייחודית
+LPHL,Energy,Oil & Gas Drilling,LAPIDOTH-HELETZ - LIMITD PARTNERSHIP,קידוחי נפט
+LSCO,Industrials,Engineering & Construction,LESICO,הנדסה ובנייה
+LUMI,Financial Services,Banks,LEUMI,בנקים
+LEOF,Industrials,Engineering & Construction,LEVINSKI OFER,הנדסה ובנייה
+LEVI,Industrials,Engineering & Construction,LEVINSTEIN ENGINEERING,הנדסה ובנייה
+LVPR,,,LEVINSTEIN PROPERTIES,"נדל""ן מגוון"
+LBRA,Financial Services, Property & Casualty Insurance,LIBRA,ביטוח מבנה ותכולה
+LCTX,Healthcare,Biotechnology,LINEAGE THERAPY,ביוטכנולוגיה
+LPSN,Technology,Software Application,LIVEPERSON,אפליקציות תוכנה
+LODZ,Real Estate Diversified,Real Estate Diversified Services,LODZIA,"שירותי נדל""ן מגוונים"
+LUDN,Industrials,Engineering & Construction,LUDAN,הנדסה ובנייה
+LUZN,Industrials,Engineering & Construction,LUZON GROUP,הנדסה ובנייה
+LURO,,,LUZON RONSON,בנייה
+MGIC,Technology,Information Technology Services,MAGIC,שירותי טכנולוגיית מידע
+MLTM,Technology,Information Technology Services,MALAM TEAM,שירותי טכנולוגיית מידע
+MSLA,Real Estate Diversified,Real Estate Diversified Development,MASLAVI,"פיתוח נדל""ן מגוון"
+MSVT,Technology,Computer Hardware,MASSIVIT,חומרת מחשבים
+MTLF,Healthcare,Biotechnology,MATRICELF,ביוטכנולוגיה
+MTRX,Technology,Software Application,MATRIX,אפליקציות תוכנה
+MAXO,Consumer Cyclical,Department Stores,MAX STOCK,כלבו
+MTRN,Technology,Consumer Electronics,MAYTRONICS,אלקטרוניקה לצרכן
+MDPR,Real Estate Diversified,Real Estate Diversified Services,MEDIPOWER,"שירותי נדל""ן מגוונים"
+MPRS,Healthcare,Medical Devices,MEDIPRSS PARTICIPATION UNIT,מכשור רפואי
+MDTR,Real Estate Diversified,Real Estate Diversified Services,MEDITERRANEAN TOWERS LTD,"שירותי נדל""ן מגוונים"
+MGOR,Real Estate Diversified,Real Estate Diversified,MEGA OR,"נדל""ן מגוון"
+MEDN,Consumer Defensive,Farm Products,MEHADRIN,מוצרי חקלאות
+MLSR,Real Estate Diversified,Real Estate Diversified Services,MELISRON,"שירותי נדל""ן מגוונים"
+MNIN,Basic Materials,Steel,MENDELSON INFRASTRUCTURE,פלדה
+MNIF,Financial Services,Credit Services,MENIF,שירותי אשראי
+MNRT,Real Estate Diversified,Real Estate Diversified Investment,MENIVIM REIT,"השקעות נדל""ן מגוונות"
+MMHD,Financial Services,Life Insurance,MENORA MIVTAHIM HOLDINGS,ביטוח חיים
+CMER,Technology,Communication Equipment,MER,ציוד תקשורת
+???,,,MERARA PARTICIPATION UNIT,השקעות בהייטק
+MRHL,Healthcare,Medical Care Facilities,MERCHAVIA HOLDINGS,מרכזים רפואיים
+MSKE,Utilities,Renewable Energy,MESHEK ENERGY,אנרגיה מתחדשת
+MGRT,Real Estate Diversified,Real Estate Diversified Investment,MGURIT,"השקעות נדל""ן מגוונות"
+MIA,Consumer Cyclical,Auto Manufacturers,MIA DYNAMICS,יצרני רכב
+MCLL,Financial Services,Credit Services,MICHLOL FINANCES,שירותי אשראי
+MCMN,Financial Services,Credit Services,MICHMAN,שירותי אשראי
+MCRNT,Technology,Communication Equipment,MICRONET,ציוד תקשורת
+MGDL,Financial Services,Life Insurance,MIGDAL INSURANCE,ביטוח חיים
+MIFT,Financial Services,Asset Management,MILLENNIUM FOOD PARTICIPATION UNIT,ניהול נכסים
+MLD,,,MIRLAND DEVELOPMENT CORPORATION,בנייה
+MSHR,Real Estate Diversified,Real Estate Diversified Services,MISHORIM,"שירותי נדל""ן מגוונים"
+MVNE,Real Estate Diversified,Real Estate Diversified Services,MIVNE,"שירותי נדל""ן מגוונים"
+MISH,Financial Services,Asset Management,MIVTACH SHAMIR,ניהול נכסים
+MZTF,Financial Services,Banks,MIZRAHI TEFAHOT,בנקים
+MLRN,Financial Services,Credit Services,MLRN,שירותי אשראי
+MDIN,Energy,Oil & Gas E&P,MODIIN PPARTICIPATION UNITU,חיפוש והפקת נפט וגז
+MRG,Consumer Cyclical,Home Improvement Retail,MULTI RETAIL,קמעונאות
+MYDS,Financial Services,Asset Management,MYDAS,ניהול נכסים
+NFTA,Energy,Oil & Gas E&P,NAPHTHA,חיפוש והפקת נפט וגז
+NVPT,Energy,Oil & Gas E&P,NAVITAS PTRO PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+NAWI,Financial Services,Credit Services,NAWI,שירותי אשראי
+NYAX,Technology,Software Infrastructure,NAYAX,תשתיות תוכנה
+NTGR,Real Estate Diversified,Real Estate Diversified Services,NETANEL GROUP,"שירותי נדל""ן מגוונים"
+NTNB,Real Estate Diversified,Real Estate Diversified Development,NETANEL MENIVIM,"פיתוח נדל""ן מגוון"
+NTO,Consumer Defensive,Food Distribution,NETO HOLDINGS,הפצת מזון
+NTML,Consumer Defensive,Packaged Foods,NETO MALINDA,מזון ארוז
+NWMD,Energy,Oil & Gas E&P,NEWMED ENERGY PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+NXSN,Industrials,Security & Protection Services,NEXT VISION,שירותי אבטחה
+NXTG,Healthcare,Drug Manufacturers,NEXTAGE,יצרני תרופות
+NXTM,Communication Services,Telecom Services,NEXTCOM,שירותי טלקום
+NXFR,Consumer Defensive,Packaged Foods,NEXTFERM,מזון ארוז
+NXGN,Healthcare,Medical Instruments & Supplies,NEXTGEN,ציוד רפואי
+NICE,Technology,Software Application,NICE,אפליקציות תוכנה
+NISA,Healthcare,Medical Instruments & Supplies,NISSAN,ציוד רפואי
+NOFR,Technology,Solar,NOFAR ENERGY,אנרגיה סולארית
+NSTR,Real Estate Diversified,Real Estate Diversified Services,NORSTAR,"שירותי נדל""ן מגוונים"
+NVMI,Technology,Semiconductor Equipment & Materials,NOVA,ציוד לשבבים
+NVLG,Healthcare,Medical Distribution,NOVOLOG,מכשור רפואי
+NRGN,Technology,Software Application,NRGENE,אפליקציות תוכנה
+NURI,Basic Materials,Specialty Chemicals,NUR,כימיקלים מיוחדים
+ORTC,Industrials,Business Equipment & Supplies,O.R.T.,ציוד עסקי
+ONE,Technology,Software Application,ONE TECHNOLOGIES,אפליקציות תוכנה
+OPAL,Financial Services,Capital Markets,OPAL BALANCE,שוקי הון
+OPCE,Utilities,Independent Power Producers,OPC ENERGY,יצרני חשמל עצמאיים
+OPK,Healthcare,Diagnostics & Research,OPKO HEALTH,אבחון ומחקר
+ORAD,Technology,Software Infrastructure,ORAD,תשתיות תוכנה
+ORMP,Healthcare,Biotechnology,ORAMED PHARM,ביוטכנולוגיה
+ORBI,Industrials,Aerospace & Defense,ORBIT,תעופה וביטחון
+ORIN,Industrials,Integrated Freight & Logistics,ORIAN,שילוח ולוגיסטיקה
+ORA,Utilities,Renewable Energy,ORMAT TECHNOLOGY,אנרגיה מתחדשת
+ORON,Industrials,Engineering & Construction,ORON GROUP,הנדסה ובנייה
+OVRS,Industrials,Integrated Freight & Logistics,OVERSEAS,שילוח ולוגיסטיקה
+PLRM,Industrials,Building Products & Equipment,PALRAM,מוצרי ובציוד בנייה
+PRKM,Industrials,Specialty Industrial Machinery,PARKOMAT,מכונות תעשייה ייחודיות
+PTNR,Communication Services,Telecom Services,PARTNER,שירותי טלקום
+PMNT,Technology,Software Infrastructure,PAYMENT FINANCES,תשתיות תוכנה
+PAYT,Industrials,Electrical Equipment & Parts,PAYTON,ציוד אלקטרוני
+PAZ,Energy,Oil & Gas Refining & Marketing,PAZ ENERGY,זיקוק ושיווק נפט
+PCBT,Technology,Electronic Components,PCB TECHNOLOGIES,רכיבים אלקטרוניים
+PEN,Financial Services,Credit Services,PENINSULA GROUP,שירותי אשראי
+PERI,Communication Services,Internet Content & Information,PERION NETWORK,תוכן אינטרנטי
+PTCH,Basic Materials,Chemicals,PETROCHEMICAL,כימיקלים
+PTX,Energy,Oil & Gas E&P,PETROTX PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+PMCN,,,PHARMOCANN,קנאביס רפואי
+PHOE,Financial Services,Insurance,PHOENIX,ביטוח
+PHTM,Technology,Software Application,PHOTOMYNE,אפליקציות תוכנה
+PLNT,Healthcare,Biotechnology,PLANT ARC,ביוטכנולוגיה
+PLSN,Industrials,Building Products & Equipment,PLASSON INDUS,מוצרי ובציוד בנייה
+PLCR,Consumer Cyclical,Packaging & Containers,PLASTO CARGAL,אריזות ומיכלים
+PPIL,Consumer Cyclical,Packaging & Containers,PLASTOFIL,אריזות ומיכלים
+PLAZ-L,Real Estate Diversified,Real Estate Diversified Development,PLAZA CENTERS,"פיתוח נדל""ן מגוון"
+PLUR,Healthcare,Biotechnology,PLURI,ביוטכנולוגיה
+POLI,Financial Services,Banks,POALIM,בנקים
+POLY,Real Estate Diversified,Real Estate Diversified Services,POLYGON,"שירותי נדל""ן מגוונים"
+POLP,Basic Materials,Specialty Chemicals,POLYRAM,כימיקלים מיוחדים
+PMVM,Technology,Software Infrastructure,POMVOM,תשתיות תוכנה
+PRSK,Real Estate Diversified,Real Estate Diversified Development,PRASHKOVSKY,"פיתוח נדל""ן מגוון"
+PRIM,Utilities,Renewable Energy,PRIME ENERGY,אנרגיה מתחדשת
+PRMG,Consumer Defensive,Household & Personal Products,PRIMOTECH,מוצרי בית ואישיים
+PRTC,Technology,Electronic Components,PRIORTECH,רכיבים אלקטרוניים
+PRPD,Technology,Software Application,PROPDO,אפליקציות תוכנה
+PTBL,Real Estate Diversified,Real Estate Diversified,PROPERTY AND BUILDING CORP. LTD.,"נדל""ן מגוון"
+PULS,Healthcare,Medical Devices,PULSENMORE,מכשור רפואי
+PPBT,Healthcare,Biotechnology,PURPLE BIOTECH,ביוטכנולוגיה
+QLTU,Technology,Semiconductor Equipment & Materials,QUALITAU,ציוד לשבבים
+QNCO,Consumer Cyclical,Resorts & Casinos,QUEENCO,נופש וקזינו
+QLRD,Technology,Software Infrastructure,QUICKLIZARD,תשתיות תוכנה
+RLCO,Technology,Electronics & Computer Distribution,RALCO,אלקטרוניקה
+RMN,Financial Services,Asset Management,RAM ON,ניהול נכסים
+RMLI,Consumer Defensive,Grocery Stores,RAMI LEVI,סופרמרקטים
+RANI,Real Estate Diversified,Real Estate Diversified,RANI ZIM,"נדל""ן מגוון"
+RPAC,Technology,Communication Equipment,RAPAC,ציוד תקשורת
+RATI,Energy,Oil & Gas E&P,RATIO PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+RTPT,Energy,Oil & Gas E&P,RATIO PETROL PARTICIPATION UNIT,חיפוש והפקת נפט וגז
+BRIH,Industrials,Building Products & Equipment,RAV BARIACH,מוצרי ובציוד בנייה
+RAVD,Real Estate Diversified,Real Estate Diversified Services,RAVAD,"שירותי נדל""ן מגוונים"
+RVL,Consumer Cyclical,Auto Parts,RAVAL,חלקי רכב
+RAYG-M,Healthcare,Drug Manufacturers,RAY TLV GROUP,יצרני תרופות
+RZR,Technology,Software Infrastructure,RAZOR LABS,תשתיות תוכנה
+RIT1,Real Estate Diversified,Real Estate Diversified Investment,REIT 1,"השקעות נדל""ן מגוונות"
+AZRT,Real Estate Diversified,Real Estate Diversified Investment,REIT AZORIM LIVING,"השקעות נדל""ן מגוונות"
+REKA,Healthcare,Drug Manufacturers,REKAH,יצרני תרופות
+RTMD-L,,,RETAILMINDS,תוכנה ואינטרנט
+RTLS,Consumer Cyclical,Apparel Retail,RETAILORS,קמעונאות הלבשה
+RMON,Industrials,Engineering & Construction,RIMON,הנדסה ובנייה
+RIMO,Basic Materials,Specialty Chemicals,RIMONI,כימיקלים מיוחדים
+ROBO,Technology,Scientific & Technical Instruments,ROBOGROUP,מכשור מדעי וטכני
+RTEN,Utilities,Independent Power Producers,ROTEM ENERGY PARTICIPATION UNIT,יצרני חשמל עצמאיים
+ROTS,Consumer Cyclical,Residential Construction,ROTSHTEIN,בנייה למגורים
+RSEL,Industrials,Aerospace & Defense,RSL,תעופה וביטחון
+SRAC,Financial Services,Credit Services,S.R ACCORD,שירותי אשראי
+SANO1,Consumer Defensive,Household & Personal Products,SANO,מוצרי בית ואישיים
+SPNS,Technology,Software Application,SAPIENS,אפליקציות תוכנה
+SRFT,Real Estate Diversified,Real Estate Diversified Development,SARFATI,"פיתוח נדל""ן מגוון"
+SARN,Technology,Scientific & Technical Instruments,SARINE TECHNOLOGIES,מכשור מדעי וטכני
+SVRE,Technology,Scientific & Technical Instruments,SAVERONE,מכשור מדעי וטכני
+SVRT,Consumer Defensive,Packaged Foods,SAVOREAT,מזון ארוז
+SHNP,Consumer Cyclical,Auto Parts,SCHNAPP,חלקי רכב
+SCDX,Industrials,Specialty Industrial Machinery,SCODIX,מכונות תעשייה ייחודיות
+SCOP,Industrials,Industrial Distribution,SCOPE,הפצה תעשייתית
+SEMG,Healthcare,Drug Manufacturers,SEACH MEDICAL,יצרני תרופות
+SLARL,Real Estate Diversified,Real Estate Diversified Investment,SELLA Real Estate Diversified,"השקעות נדל""ן מגוונות"
+SHGR,Industrials,Specialty Business Services,SHAGRIR,שרותים
+SHMM,Technology,Software Infrastructure,SHAMAYM,תשתיות תוכנה
+SHAN,Basic Materials,Paper & Paper Products,SHANIV,נייר ומוצרי נייר
+SPEN,Industrials,Engineering & Construction,SHAPIR ENGINEERING,הנדסה ובנייה
+SMNR,Real Estate Diversified,Real Estate Diversified Services,SHEMEN Real Estate Diversified,"שירותי נדל""ן מגוונים"
+SBEN,Utilities,Renewable Energy,SHIKN&BINUI ENERGY,אנרגיה מתחדשת
+SKBN,Industrials,Engineering & Construction,SHIKUN & BINUI,הנדסה ובנייה
+SHOM,Financial Services,Credit Services,SHOHAM BUSINESS,שירותי אשראי
+SAE,Consumer Defensive,Grocery Stores,SHUFERSAL,סופרמרקטים
+SKLN,Consumer Cyclical,Lodging,SKYLINE,אירוח
+SLRM,Technology,Computer Hardware,SLRM,חומרת מחשבים
+SMAG,Financial Services,Asset Management,SMART AGRO PARTICIPATION UNIT,ניהול נכסים
+SOFW,Healthcare,Medical Devices,SOFWAVE,מכשור רפואי
+SOLR,Technology,Solar,SOLAER,אנרגיה סולארית
+SONO,Basic Materials,Specialty Chemicals,SONOVIA,כימיקלים מיוחדים
+SCC,Communication Services,Telecom Services,SPACE COMMUNICATION,שירותי טלקום
+SPDV,Technology,Information Technology Services,SPEEDVALUE,שירותי טכנולוגיית מידע
+SPRG,Financial Services,Asset Management,SPRING,ניהול נכסים
+SPNTC,Consumer Cyclical,Textile Manufacturing,SPUNTECH,ייצור טקסטיל
+STG,Technology,Electronics & Computer Distribution,STG,אלקטרוניקה
+STRG,Healthcare,Medical Instruments & Supplies,STORAGE DROP,ציוד רפואי
+STRS,Consumer Defensive,Packaged Foods,STRAUSS GROUP,מזון ארוז
+STRW,Real Estate Diversified,Real Estate Investments,STRAWBERRY INC,"השקעות בנדל""ן"
+SFRN,Real Estate Diversified,Real Estate Diversified Development,SUFRIN,"פיתוח נדל""ן מגוון"
+SMT,Real Estate Diversified,Real Estate Diversified Services,SUMMIT,"שירותי נדל""ן מגוונים"
+SNFL,Utilities,Renewable Energy,SUNFLOWER,אנרגיה מתחדשת
+SNCM,Communication Services,Telecom Services,SUNY COMMUNICATION,שירותי טלקום
+STEC,Financial Services,Asset Management,SURE TECH PARTICIPATION UNIT,ניהול נכסים
+SNEL,Technology,Software Application,SYNEL,אפליקציות תוכנה
+TDRN,Technology,Consumer Electronics,TADIRAN GROUP,אלקטרוניקה לצרכן
+TMRP,Energy,Oil & Gas E&P,TAMAR PETROLIUM,חיפוש והפקת נפט וגז
+TRA,Technology,Software Application,TARYA,אפליקציות תוכנה
+TATT,Industrials,Aerospace & Defense,TAT TECHNOLOGIES,תעופה וביטחון
+TAYA,Communication Services,Entertainment,TAYA INVESTMENTS,בידור
+TNPV,Financial Services,Asset Management,TCHNOPLS VENTURES,ניהול נכסים
+TECT,Technology,Software Application,TECTONA,אפליקציות תוכנה
+TEDE,Technology,Electronic Components,TEDEA,רכיבים אלקטרוניים
+TFRLF,Consumer Cyclical,Apparel Manufacturing,TEFRON,ייצור הלבשה
+TLSY,Technology,Electronics & Computer Distribution,TELSYS,אלקטרוניקה
+TRLT,Utilities,Renewable Energy,TERALIGHT,אנרגיה מתחדשת
+TRX,Consumer Cyclical,Internet Retail,TERMINAL X,קמעונאות אינטרנטית
+TUZA,Financial Services,Asset Management,TEUZA,ניהול נכסים
+TEVA,Healthcare,Drug Manufacturers,TEVA,יצרני תרופות
+TGI,Consumer Cyclical,Auto Parts,TGI,חלקי רכב
+ILCO,Basic Materials,Specialty Chemicals,THE ISRAEL CORPORATION,כימיקלים מיוחדים
+TMIS,Real Estate Diversified,Real Estate Diversified Development,THEMIS,"פיתוח נדל""ן מגוון"
+THES,Industrials,Security & Protection Services,THIRDEYE,שירותי אבטחה
+TIGBUR,Industrials,Staffing & Employment Services,TIGBUR,שירותי השמה
+TIGI,Technology,Solar,TIGI,אנרגיה סולארית
+TKUN,Healthcare,Drug Manufacturers,TIKUN OLAM CANNABIS,יצרני תרופות
+TTAM,Consumer Defensive,Food Distribution,TIV TAAM,הפצת מזון
+TGTR,Healthcare,Drug Manufacturers,TOGETHER,יצרני תרופות
+TOEN,Energy,Oil & Gas E&P,TOMER ENERGY,חיפוש והפקת נפט וגז
+TNDO,Technology,Information Technology Services,TONDO SMART,שירותי טכנולוגיית מידע
+TOPS,Technology,Information Technology Services,TOP SYSTEMS,שירותי טכנולוגיית מידע
+TSEM,Technology,Semiconductors,TOWER,שבבים
+TRAN,Technology,Software Application,TRUCKNET,אפליקציות תוכנה
+TSG,Technology,Software Infrastructure,TSG,תשתיות תוכנה
+TURB,Industrials,Specialty Industrial Machinery,TURBOGEN,מכונות תעשייה ייחודיות
+TRPZ,Basic Materials,Specialty Chemicals,TURPAZ,כימיקלים מיוחדים
+UMH,Real Estate Diversified,Real Estate Investments,UMH,"השקעות בנדל""ן"
+UNCR,,,UNET CREDIT,אשראי חוץ בנקאי
+UNTC,Financial Services,Asset Management,UNIC-TECH PARTICIPATION UNIT,ניהול נכסים
+UNCT,Financial Services,Asset Management,UNICORN TECH PARTICIPATION UNIT,ניהול נכסים
+UNIT,Technology,Scientific & Technical Instruments,UNITRONICS,מכשור מדעי וטכני
+UNVO,,,UNIVO,מעטפת
+UPSL,Technology,Information Technology Services,UPSELLON BRANDS,שירותי טכנולוגיית מידע
+UTRN,Technology,Software Infrastructure,UTRON,תשתיות תוכנה
+VRDS,Industrials,Waste Management,VERIDIS,ניהול פסולת
+VCTR,Consumer Defensive,Discount Stores,VICTORY,חנויות דיסקאונט
+VILR,Real Estate Diversified,Real Estate Diversified Services,VILLAR,"שירותי נדל""ן מגוונים"
+VISN,Industrials,Conglomerates,VISION SIGMA,קונגלומרטים
+VTNA,Real Estate Diversified,Real Estate Diversified Development,VITANIA,"פיתוח נדל""ן מגוון"
+WATR,,,WATER IO,תוכנה ואינטרנט
+WESR,Financial Services, Property & Casualty Insurance,WESURE GLOBALT,ביטוח מבנה ותכולה
+WILK,Consumer Defensive,Farm Products,WILK,מוצרי חקלאות
+WLFD,Consumer Defensive,Packaged Foods,WILLT FOOD,מזון ארוז
+WILC,Consumer Defensive,Food Distribution,WILLY FOOD INTERNATIONAL,הפצת מזון
+WNBZ,Real Estate Diversified,Real Estate Diversified Services,WIND BUZZ,"שירותי נדל""ן מגוונים"
+XTLB,Healthcare,Biotechnology,XTL BIO,ביוטכנולוגיה
+YBRD,Healthcare,Drug Manufacturers,Y.B RENEWAL,יצרני תרופות
+YAAC,,,YAACOBI GROUP,בנייה
+YBOX,Real Estate Diversified,Real Estate Diversified Development,YBOX,"פיתוח נדל""ן מגוון"
+YHNF,Consumer Defensive,Grocery Stores,YOCHANANOF,סופרמרקטים
+ZNKL,Consumer Defensive,Packaged Foods,ZANLAKOL,מזון ארוז
+ZPRS,Utilities,Renewable Energy,ZEPHYRUS,אנרגיה מתחדשת
+ZMH,Real Estate Diversified,Real Estate Diversified Development,ZMH,"פיתוח נדל""ן מגוון"
+ZOOZ,Consumer Cyclical,Specialty Retail,ZOOZ POWER,קמעונאות ייחודית
+ZUR,Financial Services, Property & Casualty Insurance,ZUR,ביטוח מבנה ותכולה

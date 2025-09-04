@@ -1,0 +1,29 @@
+[project]
+name = "repl-nix-workspace"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "bcrypt>=4.3.0",
+    "extra-streamlit-components>=0.1.80",
+    "psycopg2-binary>=2.9.10",
+    "pyjwt>=2.10.1",
+    "requests>=2.32.3",
+    "sqlalchemy>=2.0.40",
+    "streamlit>=1.44.1",
+    "matplotlib>=3.10.3",
+    "datetime",  # part of stdlib, kept for completeness if needed by tooling
+    "yfinance",
+    "google.generativeai",
+    "openpyxl",
+    "plotly",
+    "emoji",
+    "tabulate",
+    "langchain",
+    "langchain-core",
+    "langchain-google-genai",
+    "google-generativeai",
+    "pyspellchecker",
+    "python-Levenshtein",
+    "pymongo"
+]
